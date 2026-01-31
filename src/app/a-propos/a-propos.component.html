@@ -1,0 +1,256 @@
+<!-- Quick Navigation -->
+<nav class="quick-nav">
+  <a href="#hero" data-tooltip="Accueil" (click)="scrollToSection('#hero', $event)"></a>
+  <a href="#mission" data-tooltip="Mission" (click)="scrollToSection('#mission', $event)"></a>
+  <a href="#histoire" data-tooltip="Histoire" (click)="scrollToSection('#histoire', $event)"></a>
+  <a href="#statistiques" data-tooltip="Chiffres" (click)="scrollToSection('#statistiques', $event)"></a>
+  <a href="#services" data-tooltip="Services" (click)="scrollToSection('#services', $event)"></a>
+  <a href="#contact" data-tooltip="Contact" (click)="scrollToSection('#contact', $event)"></a>
+</nav>
+
+<!-- Hero Section -->
+<section id="hero" class="hero-section">
+  <div class="hero-particles"></div>
+  <div class="hero-pattern"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-icon">⚕️</span>
+      <span>Centre Hospitalier Universitaire d'Excellence</span>
+    </div>
+    <h1 class="hero-title">CHU Fattouma-Bourguiba</h1>
+    <p class="hero-subtitle">
+      Un siècle d'excellence médicale au service de votre santé<br>
+      Monastir - Tunisie
+    </p>
+    <div class="hero-location">
+      📍 Avenue Farhat-Hached et rue du 1er-Juin 1995
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat" *ngFor="let stat of heroStats">
+        <div class="hero-stat-number">{{ stat.number }}</div>
+        <div class="hero-stat-label">{{ stat.label }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span></span>
+  </div>
+</section>
+
+<!-- Mission & Vision Section -->
+<section id="mission" class="section">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="section-tag">Notre Engagement</span>
+      <h2 class="section-title">Mission & Vision</h2>
+      <p class="section-description">
+        Établissement public à caractère administratif doté de la personnalité morale et de l'autonomie financière,
+        sous la supervision du ministère de la Santé.
+      </p>
+    </div>
+
+    <div class="mission-vision-grid">
+      <div class="mission-card scroll-reveal">
+        <div class="mission-icon">🎯</div>
+        <h3 class="mission-title">Notre Mission</h3>
+        <p class="mission-description">
+          Le CHU Fattouma-Bourguiba a pour mission principale de fournir des soins de qualité
+          et d'assurer la prévention, l'enseignement et la recherche dans les domaines médical et sanitaire.
+        </p>
+        <ul class="mission-list">
+          <li>Soins médicaux de haute qualité</li>
+          <li>Prévention et promotion de la santé</li>
+          <li>Enseignement universitaire et post-universitaire</li>
+          <li>Recherche scientifique médicale</li>
+          <li>Formation continue des professionnels</li>
+        </ul>
+      </div>
+
+      <div class="mission-card scroll-reveal">
+        <div class="mission-icon">🏆</div>
+        <h3 class="mission-title">Notre Excellence</h3>
+        <p class="mission-description">
+          Considéré comme l'un des piliers de l'infrastructure de santé du pays grâce à la diversité
+          de ses spécialités et à la compétence de ses équipes opérationnelles.
+        </p>
+        <ul class="mission-list">
+          <li>Centre de formation médicale reconnu</li>
+          <li>Recherche scientifique de pointe</li>
+          <li>Équipes multidisciplinaires expertes</li>
+          <li>Technologies médicales avancées</li>
+          <li>Innovation et excellence continue</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Histoire Timeline -->
+<section id="histoire" class="section timeline-section">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="section-tag">Notre Parcours</span>
+      <h2 class="section-title">Plus d'un Siècle d'Histoire</h2>
+      <p class="section-description">
+        L'hôpital Fattouma-Bourguiba est l'un des plus anciens établissements de santé en Tunisie,
+        construit par des citoyens bénévoles au début du XXe siècle.
+      </p>
+    </div>
+
+    <div class="timeline-wrapper">
+      <div class="timeline-line"></div>
+      
+      <div class="timeline-item" *ngFor="let item of timeline; let i = index" [class.even]="i % 2 === 1">
+        <div class="timeline-content">
+          <div class="timeline-card">
+            <div class="timeline-year">{{ item.year }}</div>
+            <h3 class="timeline-title">{{ item.title }}</h3>
+            <p class="timeline-description">{{ item.description }}</p>
+          </div>
+        </div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Statistiques -->
+<section id="statistiques" class="section">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="section-tag">En Chiffres</span>
+      <h2 class="section-title">Un Impact Mesurable</h2>
+      <p class="section-description">
+        Des chiffres qui témoignent de notre engagement et de notre capacité à servir la communauté.
+      </p>
+    </div>
+
+    <div class="stats-container scroll-reveal">
+      <div class="stats-grid">
+        <div class="stat-card" *ngFor="let stat of stats">
+          <div class="stat-icon">{{ stat.icon }}</div>
+          <div class="stat-number" [attr.data-target]="stat.target">0</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Médicaux -->
+<section id="services" class="section services-section">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="section-tag">Nos Spécialités</span>
+      <h2 class="section-title">Services Médicaux Complets</h2>
+      <p class="section-description">
+        Une couverture complète de toutes les spécialités médicales avec des équipes hautement qualifiées.
+      </p>
+    </div>
+
+    <div class="services-tabs scroll-reveal">
+      <button class="tab-button" [class.active]="activeTab === 'all'" (click)="filterServices('all')">
+        Tous les Services
+      </button>
+      <button class="tab-button" [class.active]="activeTab === 'site1'" (click)="filterServices('site1')">
+        Site Principal
+      </button>
+      <button class="tab-button" [class.active]="activeTab === 'site2'" (click)="filterServices('site2')">
+        Unité Maternité
+      </button>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card scroll-reveal" *ngFor="let service of filteredServices">
+        <div class="service-icon">{{ service.icon }}</div>
+        <span class="service-type">{{ service.type }}</span>
+        <h3 class="service-name">{{ service.name }}</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Laboratoires -->
+<section class="section labs-section">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="section-tag">Diagnostic</span>
+      <h2 class="section-title">Laboratoires Spécialisés</h2>
+      <p class="section-description">
+        5 laboratoires équipés des technologies les plus avancées pour des diagnostics précis.
+      </p>
+    </div>
+
+    <div class="labs-grid">
+      <div class="lab-card scroll-reveal" *ngFor="let lab of laboratories">
+        <div class="lab-icon">{{ lab.icon }}</div>
+        <div class="lab-name">{{ lab.name }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Certifications -->
+<section class="section certs-section">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="section-tag">Qualité & Excellence</span>
+      <h2 class="section-title">Certifications & Agréments</h2>
+      <p class="section-description">
+        Un engagement constant pour les plus hauts standards de qualité et de sécurité des soins.
+      </p>
+    </div>
+
+    <div class="certifications-grid">
+      <div class="cert-badge scroll-reveal" *ngFor="let cert of certifications">
+        <div class="cert-icon">{{ cert.icon }}</div>
+        <div class="cert-name">{{ cert.name }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="section contact-section">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="section-tag">Informations</span>
+      <h2 class="section-title">Contact & Direction</h2>
+      <p class="section-description">
+        Restez en contact avec notre équipe pour toutes vos questions et besoins de santé.
+      </p>
+    </div>
+
+    <div class="contact-info-grid">
+      <div class="contact-card scroll-reveal">
+        <div class="contact-icon">👨‍💼</div>
+        <h3 class="contact-title">Direction</h3>
+        <div class="contact-details">
+          <strong>Directeur Général</strong>
+          Dr. Lotfi Boubaker
+        </div>
+      </div>
+
+      <div class="contact-card scroll-reveal">
+        <div class="contact-icon">📍</div>
+        <h3 class="contact-title">Adresse Principale</h3>
+        <div class="contact-details">
+          Avenue Farhat-Hached<br>
+          Monastir, Tunisie<br>
+          <strong>Superficie : 1,4 hectare</strong>
+        </div>
+      </div>
+
+      <div class="contact-card scroll-reveal">
+        <div class="contact-icon">🌐</div>
+        <h3 class="contact-title">Site Web</h3>
+        <div class="contact-details">
+          <a href="http://www.hopitalfattoumabourguiba.tn/" target="_blank">
+            www.hopitalfattoumabourguiba.tn
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

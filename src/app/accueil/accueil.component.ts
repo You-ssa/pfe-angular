@@ -6,7 +6,7 @@ import {
   OnDestroy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// Interface pour les spécialités médicales
+
 interface Specialty {
   id: string;
   name: string;
@@ -20,7 +20,7 @@ interface StatItem {
   value: number;
   suffix?: string;
   current: number;
-   icon: string;
+  icon: string;
 }
 
 @Component({
@@ -33,58 +33,32 @@ interface StatItem {
 export class AccueilComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('heroVideo') video!: ElementRef<HTMLVideoElement>;
-  
-  // ========================================
-  // PROPRIÉTÉS POUR LA VIDÉO HERO
-  // ========================================
+
   titles = [
     'Votre Santé Connectée',
     'Santé Sans Frontières',
     'À Votre Écoute'
   ];
-
   subtitles = [
     'Expertise médicale accessible en quelques clics',
     'Éliminez les barrières géographiques pour votre santé',
     'Soins de qualité accessibles 24h/24 et 7j/7'
   ];
-  
-  
+
   currentTitleIndex = 0;
   currentTitle = this.titles[0];
   currentSubtitle = this.subtitles[0];
   titleAnimating = true;
   subtitleAnimating = true;
   buttonAnimating = true;
-  
+
   private titleInterval: any;
- /* =========================
-     STATISTIQUES
-  ========================= */
 
   stats: StatItem[] = [
-  {
-    label: 'Patients satisfaits',
-    value: 50000,
-    suffix: '+',
-    current: 0,
-    icon: 'assets/patient.png'
-  },
-  {
-    label: 'Médecins experts',
-    value: 120,
-    current: 0,
-    icon: 'assets/doctor.png'
-  },
-  {
-    label: 'Assistance médicale',
-    value: 24,
-    suffix: '/7',
-    current: 0,
-    icon: 'assets/time.png'
-  }
-];
-
+    { label: 'Patients satisfaits', value: 50000, suffix: '+', current: 0, icon: 'assets/patient.png' },
+    { label: 'Médecins experts', value: 120, current: 0, icon: 'assets/doctor.png' },
+    { label: 'Assistance médicale', value: 24, suffix: '/7', current: 0, icon: 'assets/time.png' }
+  ];
 
   private observer!: IntersectionObserver;
   private statsAnimated = false;
@@ -101,23 +75,15 @@ export class AccueilComponent implements AfterViewInit, OnDestroy {
       }, 20);
     });
   }
-  // ========================================
-  // PROPRIÉTÉS POUR LES CONSEILS MÉDICAUX
-  // ========================================
+
   isModalOpen = false;
-  currentSpecialty: Specialty = {
-    id: '',
-    name: '',
-    icon: '',
-    color: '',
-    conseils: []
-  };
+  currentSpecialty: Specialty = { id: '', name: '', icon: '', color: '', conseils: [] }; 
 
   specialties: { [key: string]: Specialty } = {
     'medecine-generale': {
       id: 'medecine-generale',
       name: 'Médecine générale',
-      icon: 'assets/mede.png',
+      icon: 'assets/med.png',
       color: 'linear-gradient(135deg, #66BB6A, #81C784)',
       conseils: [
         'Consultez régulièrement votre médecin pour un bilan de santé annuel.',

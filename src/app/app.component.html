@@ -6,18 +6,119 @@
 
   <ul class="nav-links">
     <li>
-      <a href="#" class="urgence-link">
+      <a href="#" class="urgence-link" (click)="openUrgence(); $event.preventDefault()">
         <img src="assets/alerte.gif" alt="Urgence" class="urgence-gif" />
         URGENCE
       </a>
     </li>
-    <li><a href="#">Accueil</a></li>
-    <li><a href="#">Explorer</a></li>
-    <li><a href="#">À propos</a></li>
-    <li><a href="#">Centre d'aide</a></li>
-    <li><a href="#">Se Connecter</a></li>
+    <li><a routerLink="/" routerLinkActive="active">Accueil</a></li>
+    <li><a routerLink="/explorer" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Explorer</a></li>
+    <li><a routerLink="/a-propos" routerLinkActive="active">À propos</a></li>
+    <li><a routerLink="/login">Se Connecter</a></li>
   </ul>
 </nav>
 
-<!-- Composant Accueil (vidéo + texte) -->
-<app-accueil></app-accueil>
+<!-- Modal urgence -->
+<app-urgence-modal #urgenceModal></app-urgence-modal>
+
+<!-- Zone où s'affichent les composants routés -->
+<router-outlet></router-outlet>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-main">
+      <!-- Colonne 1: Brand -->
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="logo-icon"></div>
+          <span class="logo-text">MediConnect</span>
+        </div>
+        <p class="footer-tagline">
+          Votre santé à portée de clic. Consultations médicales en ligne 24/7 avec des professionnels certifiés.
+          Parce que prendre soin de vous ne devrait jamais attendre.
+        </p>
+        <div class="footer-certifications">
+          <span class="cert-badge">🏥 Agrément ARS</span>
+          <span class="cert-badge">🔒 HDS Certifié</span>
+          <span class="cert-badge">✓ ISO 27001</span>
+          <span class="cert-badge">📋 RGPD Conforme</span>
+        </div>
+      </div>
+
+      <!-- Colonne 2: Liens rapides -->
+      <div class="footer-column">
+        <h4 class="footer-title">Liens Rapides</h4>
+        <ul class="footer-links">
+          <li><a href="#services">Nos Services</a></li>
+          <li><a href="#specialites">Spécialités Médicales</a></li>
+          <li><a href="#comment-ca-marche">Comment ça marche</a></li>
+          <li><a href="#tarifs">Tarifs</a></li>
+          <li><a href="#faq">Questions Fréquentes</a></li>
+          <li><a href="#contact">Nous Contacter</a></li>
+        </ul>
+      </div>
+
+      <!-- Colonne 3: Services Patients -->
+      <div class="footer-column">
+        <h4 class="footer-title">Services Patients</h4>
+        <ul class="footer-links">
+          <li><a href="#inscription">Créer un compte</a></li>
+          <li><a href="#connexion">Se connecter</a></li>
+          <li><a href="#rendez-vous">Prendre rendez-vous</a></li>
+          <li><a href="#dossier-medical">Mon dossier médical</a></li>
+          <li><a href="#ordonnances">Mes ordonnances</a></li>
+          <li><a href="#historique">Historique consultations</a></li>
+        </ul>
+      </div>
+
+      <!-- Colonne 4: Contact -->
+      <div class="footer-column">
+        <h4 class="footer-title">Contactez-nous</h4>
+        <ul class="footer-contact">
+          <li>+216 XX XXX XXX</li>
+          <li>contact&#64;mediconnect.tn</li>
+          <li>Monastir, Tunisie</li>
+          <li>Disponible 24h/24, 7j/7</li>
+        </ul>
+        <!-- Réseaux sociaux -->
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook">FB</a>
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="LinkedIn">LI</a>
+          <a href="#" aria-label="Twitter">TW</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="newsletter-section">
+      <div class="newsletter-content">
+        <h4 class="newsletter-title">📧 Restez informé de nos actualités santé</h4>
+        <p class="newsletter-description">Recevez nos conseils santé, nos actualités médicales et nos offres exclusives directement dans votre boîte mail.</p>
+        <div class="input-group">
+          <input type="email" class="newsletter-input" placeholder="votre@email.fr" required>
+          <button class="newsletter-btn">S'abonner</button>
+        </div>
+        <p class="privacy-note">En vous inscrivant, vous acceptez notre <a href="#privacy">politique de confidentialité</a></p>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-container">
+        <div class="footer-copyright">
+          © 2026 MediConnect. Tous droits réservés.
+        </div>
+        <div class="footer-download">
+          <a href="https://play.google.com/store" target="_blank" class="app-download">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Disponible sur Google Play" />
+          </a>
+          <a href="https://www.apple.com/app-store/" target="_blank" class="app-download">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Télécharger sur l'App Store" />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

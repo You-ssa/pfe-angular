@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Espace Secrétaire</h1>
+    <div class="user-info" *ngIf="currentUser">
+      <div class="user-details">
+        <i class="fas fa-user-tie"></i>
+        <div>
+          <p class="user-name">{{ currentUser.prenom }} {{ currentUser.nom }}</p>
+          <p class="user-role">{{ currentUser.poste }}</p>
+        </div>
+      </div>
+      <button class="btn-logout" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </button>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="welcome-card">
+      <i class="fas fa-hand-wave"></i>
+      <h2>Bienvenue {{ currentUser?.prenom }} !</h2>
+      <p>Vous êtes connecté en tant que secrétaire - {{ currentUser?.departement }}</p>
+    </div>
+
+    <div class="quick-actions">
+      <h3>Actions rapides</h3>
+      <div class="actions-grid">
+        <div class="action-card">
+          <i class="fas fa-calendar-check"></i>
+          <h4>Gérer les rendez-vous</h4>
+          <p>Planifier et organiser les consultations</p>
+        </div>
+        <div class="action-card">
+          <i class="fas fa-users"></i>
+          <h4>Gestion patients</h4>
+          <p>Consulter et mettre à jour les dossiers</p>
+        </div>
+        <div class="action-card">
+          <i class="fas fa-file-medical"></i>
+          <h4>Documents</h4>
+          <p>Gérer les documents administratifs</p>
+        </div>
+        <div class="action-card">
+          <i class="fas fa-envelope"></i>
+          <h4>Messages</h4>
+          <p>Communication avec l'équipe médicale</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<div class="auth-container">
+  <div class="auth-card">
+    <!-- Tabs de sélection du type d'utilisateur -->
+    <div class="user-type-tabs">
+      <button 
+        class="tab-btn"
+        (click)="goToRegisterPatient()"
+        type="button">
+        <i class="fas fa-user"></i> Patient
+      </button>
+      <button 
+        class="tab-btn active"
+        type="button">
+        <i class="fas fa-user-md"></i> Médecin
+      </button>
+      <button 
+        class="tab-btn"
+        (click)="goToRegisterSecretaire()"
+        type="button">
+        <i class="fas fa-user-tie"></i> Secrétaire
+      </button>
+    </div>
+
+    <h2>Inscription Médecin</h2>
+
+    <form (ngSubmit)="registerMed()">
+      <!-- Photo de profil -->
+      <div class="form-group photo-upload">
+        <label>Photo de profil</label>
+        <div class="photo-preview-container">
+          <div class="photo-preview" *ngIf="photoPreview">
+            <img [src]="photoPreview" alt="Prévisualisation">
+          </div>
+          <div class="photo-placeholder" *ngIf="!photoPreview">
+            <i class="fas fa-camera"></i>
+            <p>Cliquez pour ajouter une photo</p>
+          </div>
+          <input
+            type="file"
+            id="photo"
+            accept="image/*"
+            (change)="onPhotoSelected($event)"
+            style="display: none;">
+          <label for="photo" class="photo-btn">
+            <i class="fas fa-upload"></i> Choisir une photo
+          </label>
+        </div>
+      </div>
+
+      <!-- Nom et Prénom -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nom">Nom *</label>
+          <input
+            type="text"
+            id="nom"
+            [(ngModel)]="nom"
+            name="nom"
+            placeholder="Nom"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="prenom">Prénom *</label>
+          <input
+            type="text"
+            id="prenom"
+            [(ngModel)]="prenom"
+            name="prenom"
+            placeholder="Prénom"
+            required>
+        </div>
+      </div>
+
+      <!-- Sexe -->
+      <div class="form-group">
+        <label for="sexe">Sexe *</label>
+        <select
+          id="sexe"
+          [(ngModel)]="sexe"
+          name="sexe"
+          required>
+          <option value="">Sélectionner</option>
+          <option value="Homme">Homme</option>
+          <option value="Femme">Femme</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+
+      <!-- Spécialité médicale -->
+      <div class="form-group">
+        <label for="specialite">Spécialité médicale *</label>
+        <select
+          id="specialite"
+          [(ngModel)]="specialite"
+          name="specialite"
+          required>
+          <option value="">Sélectionner une spécialité</option>
+          <option *ngFor="let spec of specialites" [value]="spec">
+            {{ spec }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Numéro RPPS -->
+      <div class="form-group">
+        <label for="rpps">Numéro RPPS *</label>
+        <input
+          type="text"
+          id="rpps"
+          [(ngModel)]="rpps"
+          name="rpps"
+          placeholder="11 chiffres"
+          pattern="\d{11}"
+          maxlength="11"
+          required>
+        <small class="help-text">
+          <i class="fas fa-info-circle"></i> Répertoire Partagé des Professionnels de Santé (11 chiffres)
+        </small>
+      </div>
+
+      <!-- Adresse hôpital / cabinet -->
+      <div class="form-group">
+        <label for="adresseHopital">Adresse hôpital / cabinet *</label>
+        <textarea
+          id="adresseHopital"
+          [(ngModel)]="adresseHopital"
+          name="adresseHopital"
+          placeholder="Adresse complète de votre lieu d'exercice"
+          rows="3"
+          required></textarea>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="votre@email.com"
+          required>
+      </div>
+
+      <!-- Téléphone -->
+      <div class="form-group">
+        <label for="telephone">Téléphone *</label>
+        <input
+          type="tel"
+          id="telephone"
+          [(ngModel)]="telephone"
+          name="telephone"
+          placeholder="+216 XX XXX XXX"
+          required>
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="form-group">
+        <label for="motDePasse">Mot de passe *</label>
+        <input
+          type="password"
+          id="motDePasse"
+          [(ngModel)]="motDePasse"
+          name="motDePasse"
+          placeholder="••••••••"
+          required>
+      </div>
+
+      <!-- Confirmation mot de passe -->
+      <div class="form-group">
+        <label for="confMotDePasse">Confirmer mot de passe *</label>
+        <input
+          type="password"
+          id="confMotDePasse"
+          [(ngModel)]="confMotDePasse"
+          name="confMotDePasse"
+          placeholder="••••••••"
+          required>
+        <small class="error-text" *ngIf="motDePasse && confMotDePasse && motDePasse !== confMotDePasse">
+          <i class="fas fa-exclamation-triangle"></i> Les mots de passe ne correspondent pas
+        </small>
+      </div>
+
+      <!-- Conditions -->
+      <div class="form-group checkbox-group">
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="acceptConditions"
+            name="acceptConditions"
+            required>
+          <i class="fas fa-check-square" *ngIf="acceptConditions"></i>
+          <i class="far fa-square" *ngIf="!acceptConditions"></i>
+          J'accepte les conditions d'utilisation *
+        </label>
+      </div>
+
+      <!-- Messages -->
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+      </div>
+
+      <div class="success-message" *ngIf="successMessage">
+        <i class="fas fa-check-circle"></i> {{ successMessage }}
+      </div>
+
+      <!-- Bouton d'inscription -->
+      <button 
+        type="submit" 
+        class="btn-primary"
+        [disabled]="isLoading">
+        <span *ngIf="!isLoading">
+          <i class="fas fa-user-plus"></i> Créer mon compte
+        </span>
+        <span *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin"></i> Envoi de la demande...
+        </span>
+      </button>
+
+      <!-- Info validation -->
+      <div class="info-message">
+        <i class="fas fa-info-circle"></i> 
+        Votre compte sera activé après validation par l'administrateur
+      </div>
+    </form>
+
+    <!-- Lien vers connexion -->
+    <div class="auth-footer">
+      Vous avez déjà un compte ? 
+      <a routerLink="/login">Se connecter</a>
+    </div>
+  </div>
+</div>

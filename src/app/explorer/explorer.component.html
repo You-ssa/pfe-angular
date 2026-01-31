@@ -1,0 +1,169 @@
+<div class="header-strip"></div>
+
+<div class="container">
+  <div class="hero-section">
+    <h1>Prenez rapidement un rendez-vous avec votre médecin !</h1>
+    <p>Sélectionnez votre médecin, choisissez la date et l'heure de votre rdv et recevez votre sms/mail de confirmation.<br>C'est aussi simple que ça !</p>
+
+    <div class="illustration">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="80" fill="#2C5F7C" opacity="0.1"/>
+        <circle cx="100" cy="100" r="60" fill="#FFD84D" opacity="0.3"/>
+        <path d="M100,50 L110,80 L140,80 L118,100 L128,130 L100,110 L72,130 L82,100 L60,80 L90,80 Z" fill="#E8505B"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="tabs-container">
+    <div class="tabs">
+      <button type="button" class="tab" [class.active]="activeTab === 'medecin'" (click)="switchTab('medecin')">
+        <span class="tab-icon">👨‍⚕️</span> Médecin
+      </button>
+      <button type="button" class="tab" [class.active]="activeTab === 'pharmacie'" (click)="switchTab('pharmacie')">
+        <span class="tab-icon">💊</span> Pharmacie
+      </button>
+      <button type="button" class="tab" [class.active]="activeTab === 'medicament'" (click)="switchTab('medicament')">
+        <span class="tab-icon">💉</span> Médicament
+      </button>
+    </div>
+
+    <!-- Médecin Tab -->
+    <div class="tab-content" [class.active]="activeTab === 'medecin'">
+      <form class="search-form" (ngSubmit)="searchMedecin()" #medecinForm="ngForm">
+        <div class="search-row">
+          <div class="form-group">
+            <label><span class="info-icon">🔍</span> Nom du professionnel</label>
+            <input type="text" [(ngModel)]="medecinSearch.nom" name="nom" placeholder="Entrez le nom du médecin">
+          </div>
+          <div class="form-group">
+            <label><span class="info-icon">🏥</span> Spécialité</label>
+            <select [(ngModel)]="medecinSearch.specialite" name="specialite">
+              <option value="">Toutes les spécialités</option>
+              <option value="Généraliste">Généraliste</option>
+              <option value="Cardiologue">Cardiologue</option>
+              <option value="Dermatologue">Dermatologue</option>
+              <option value="Pédiatre">Pédiatre</option>
+              <option value="Gynécologue">Gynécologue</option>
+              <option value="ORL">ORL</option>
+              <option value="Dentiste">Dentiste</option>
+            </select>
+          </div>
+        </div>
+        <div class="search-row">
+          <div class="form-group">
+            <label><span class="info-icon">✉️</span> Email</label>
+            <input type="email" [(ngModel)]="medecinSearch.email" name="email" placeholder="exemple@email.com">
+          </div>
+          <div class="form-group">
+            <label><span class="info-icon">📱</span> Téléphone</label>
+            <input type="tel" [(ngModel)]="medecinSearch.telephone" name="telephone" placeholder="+216 XX XXX XXX">
+          </div>
+        </div>
+        <button type="submit" class="search-button">🔍 Rechercher</button>
+      </form>
+
+      <div class="results-section" *ngIf="medecinResults.length > 0">
+        <h2 class="results-header"><span>👨‍⚕️</span> Médecins trouvés</h2>
+        <div class="results-grid">
+          <div class="result-card" *ngFor="let medecin of medecinResults">
+            <div class="result-name">{{ medecin.nom }}</div>
+            <div class="result-specialty">{{ medecin.specialite }}</div>
+            <div class="result-info">
+              <div class="info-item"><span class="info-icon">✉️</span> {{ medecin.email }}</div>
+              <div class="info-item"><span class="info-icon">📱</span> {{ medecin.telephone }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="medecinResults.length === 0">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="currentColor"/></svg>
+        <p>Effectuez une recherche pour trouver un médecin</p>
+      </div>
+    </div>
+
+    <!-- Pharmacie Tab -->
+    <div class="tab-content" [class.active]="activeTab === 'pharmacie'">
+      <form class="search-form" (ngSubmit)="searchPharmacie()" #pharmacieForm="ngForm">
+        <div class="search-row">
+          <div class="form-group">
+            <label><span class="info-icon">🔍</span> Nom de la pharmacie</label>
+            <input type="text" [(ngModel)]="pharmacieSearch.nom" name="nom" placeholder="Entrez le nom de la pharmacie">
+          </div>
+          <div class="form-group">
+            <label><span class="info-icon">📍</span> Ville</label>
+            <select [(ngModel)]="pharmacieSearch.ville" name="ville">
+              <option value="">Toutes les villes</option>
+              <option value="Tunis">Tunis</option>
+              <option value="Sfax">Sfax</option>
+              <option value="Sousse">Sousse</option>
+              <option value="Kairouan">Kairouan</option>
+              <option value="Bizerte">Bizerte</option>
+              <option value="Gabès">Gabès</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label><span class="info-icon">⏰</span> Ouverture</label>
+          <div class="radio-group">
+            <label class="radio-option" [class.selected]="pharmacieSearch.ouverture === 'jour'">
+              <input type="radio" [(ngModel)]="pharmacieSearch.ouverture" name="ouverture" value="jour"> Jour
+            </label>
+            <label class="radio-option" [class.selected]="pharmacieSearch.ouverture === 'nuit'">
+              <input type="radio" [(ngModel)]="pharmacieSearch.ouverture" name="ouverture" value="nuit"> Nuit
+            </label>
+            <label class="radio-option" [class.selected]="pharmacieSearch.ouverture === 'garde'">
+              <input type="radio" [(ngModel)]="pharmacieSearch.ouverture" name="ouverture" value="garde"> Garde
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="search-button">🔍 Rechercher</button>
+      </form>
+
+      <div class="results-section" *ngIf="pharmacieResults.length > 0">
+        <h2 class="results-header"><span>💊</span> Pharmacies trouvées</h2>
+        <div class="results-grid">
+          <div class="result-card" *ngFor="let pharmacie of pharmacieResults">
+            <div class="result-name">{{ pharmacie.nom }}</div>
+            <div class="result-info">
+              <div class="info-item"><span class="info-icon">📍</span> {{ pharmacie.ville }}</div>
+              <div class="info-item"><span class="info-icon">📱</span> {{ pharmacie.telephone }}</div>
+            </div>
+            <span class="badge" [ngClass]="pharmacie.etat">{{ pharmacie.etat | titlecase }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="pharmacieResults.length === 0">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="currentColor"/></svg>
+        <p>Effectuez une recherche pour trouver une pharmacie</p>
+      </div>
+    </div>
+
+    <!-- Médicament Tab -->
+    <div class="tab-content" [class.active]="activeTab === 'medicament'">
+      <form class="search-form" (ngSubmit)="searchMedicament()" #medicamentForm="ngForm">
+        <div class="form-group">
+          <label><span class="info-icon">🔍</span> Nom du médicament</label>
+          <input type="text" [(ngModel)]="medicamentSearch.nom" name="nom" placeholder="Entrez le nom du médicament">
+        </div>
+        <button type="submit" class="search-button">🔍 Rechercher</button>
+      </form>
+
+      <div class="results-section" *ngIf="medicamentResults.length > 0">
+        <h2 class="results-header"><span>💉</span> Médicaments trouvés</h2>
+        <div class="results-grid">
+          <div class="result-card" *ngFor="let medicament of medicamentResults">
+            <div class="result-name">{{ medicament.nom }}</div>
+            <div class="medication-description">{{ medicament.description }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="medicamentResults.length === 0">
+        <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="currentColor"/></svg>
+        <p>Effectuez une recherche pour trouver un médicament</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="modal-backdrop" *ngIf="isOpen">
+  <div class="modal-content">
+    <!-- Titre -->
+    <h2 class="modal-title">🚑 Numéros d’Urgence – Tunisie / أرقام الطوارئ – تونس</h2>
+    <p class="modal-subtitle">📞 Disponible 24h / 24 – 7j / 7 / متاح 24/7</p>
+
+    <!-- Cartes -->
+    <div class="cards-container">
+      <!-- Carte SAMU -->
+      <div class="card card-red">
+        <div class="card-icon">🚑</div>
+        <h3>SAMU / الإسعاف</h3>
+        <p>📞 190</p>
+        <p>⏰ 24h / 24</p>
+        <button (click)="callNumber('190')">APPELER MAINTENANT / اتصل الآن</button>
+      </div>
+
+      <!-- Carte Protection Civile -->
+      <div class="card card-orange">
+        <div class="card-icon">🚒</div>
+        <h3>Protection Civile / الحماية المدنية</h3>
+        <p>📞 198</p>
+        <p>⏰ 24h / 24</p>
+        <button (click)="callNumber('198')">APPELER MAINTENANT / اتصل الآن</button>
+      </div>
+
+      <!-- Carte Urgence Monastir -->
+      <div class="card card-blue">
+        <div class="card-icon">🏥</div>
+        <h3>Urgence Monastir / مستشفى المنستير</h3>
+        <p>📞 73 106 000</p>
+        <p>⏰ 24h / 24</p>
+        <button (click)="callNumber('73106000')">APPELER / اتصل</button>
+      </div>
+    </div>
+
+    <!-- Message rassurant -->
+    <p class="modal-message">💙 En cas d’urgence, restez calme et appelez immédiatement les services appropriés. / في حالة الطوارئ، ابق هادئًا واتصل مباشرة بالخدمات المناسبة.</p>
+
+    <!-- Close button -->
+    <button class="close-btn" (click)="closeModal()">✖</button>
+  </div>
+</div>
