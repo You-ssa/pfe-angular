@@ -11,18 +11,18 @@ export interface User {
   motDePasse: string;
   userType: 'patient' | 'medecin' | 'secretaire' | 'admin';
   dateInscription: string;
+  photoUrl?: string;
   
   // Champs spécifiques patient
+  sexe?: string;
   pays?: string;
   ville?: string;
   
   // Champs spécifiques médecin
-  sexe?: string;
   specialite?: string;
   rpps?: string;
   adresseHopital?: string;
-  photoUrl?: string;
-  statut?: 'en_attente' | 'approuve' | 'refuse'; // Pour validation admin
+  statut?: 'en_attente' | 'approuve' | 'refuse';
   
   // Champs spécifiques secrétaire
   poste?: string;
@@ -39,10 +39,17 @@ export class UserService {
   ) {}
 
   /**
-   * Créer un patient (enregistré automatiquement)
+   * Créer un patient (avec photo optionnelle)
    */
-  async createPatient(user: User): Promise<void> {
+  async createPatient(user: User, photoFile?: File): Promise<void> {
     try {
+      // Upload photo si fournie
+      if (photoFile) {
+        const fileRef = ref(this.storage, `patients/${Date.now()}_${photoFile.name}`);
+        await uploadBytes(fileRef, photoFile);
+        user.photoUrl = await getDownloadURL(fileRef);
+      }
+
       user.userType = 'patient';
       user.dateInscription = new Date().toISOString();
       await addDoc(collection(this.firestore, 'patients'), user);
@@ -66,7 +73,7 @@ export class UserService {
       }
 
       user.userType = 'medecin';
-      user.statut = 'en_attente'; // 🔒 Doit être approuvé par admin
+      user.statut = 'en_attente';
       user.dateInscription = new Date().toISOString();
       
       await addDoc(collection(this.firestore, 'medecins'), user);
@@ -78,12 +85,19 @@ export class UserService {
   }
 
   /**
-   * Créer un secrétaire (en attente d'approbation admin)
+   * Créer un secrétaire (avec photo optionnelle)
    */
-  async createSecretaire(user: User): Promise<void> {
+  async createSecretaire(user: User, photoFile?: File): Promise<void> {
     try {
+      // Upload photo si fournie
+      if (photoFile) {
+        const fileRef = ref(this.storage, `secretaires/${Date.now()}_${photoFile.name}`);
+        await uploadBytes(fileRef, photoFile);
+        user.photoUrl = await getDownloadURL(fileRef);
+      }
+
       user.userType = 'secretaire';
-      user.statut = 'en_attente'; // 🔒 Doit être approuvé par admin
+      user.statut = 'en_attente';
       user.dateInscription = new Date().toISOString();
       
       await addDoc(collection(this.firestore, 'secretaires'), user);
@@ -95,11 +109,26 @@ export class UserService {
   }
 
   /**
+   * Créer un admin (réservé aux admins existants)
+   */
+  async createAdmin(user: User): Promise<void> {
+    try {
+      user.userType = 'admin';
+      user.dateInscription = new Date().toISOString();
+      
+      await addDoc(collection(this.firestore, 'admins'), user);
+      console.log('✅ Admin créé avec succès');
+    } catch (error) {
+      console.error('❌ Erreur création admin:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Connexion utilisateur
    */
   async login(email: string, motDePasse: string, userType: string): Promise<User | null> {
     try {
-      // Déterminer la collection selon le type
       let collectionName = '';
       switch (userType) {
         case 'patient':
@@ -170,6 +199,9 @@ export class UserService {
         case 'secretaire':
           collectionName = 'secretaires';
           break;
+        case 'admin':
+          collectionName = 'admins';
+          break;
         default:
           return false;
       }
@@ -188,7 +220,7 @@ export class UserService {
   }
 
   /**
-   * Approuver un médecin ou secrétaire (admin uniquement)
+   * Approuver un médecin ou secrétaire
    */
   async approuverUtilisateur(userId: string, userType: 'medecin' | 'secretaire'): Promise<void> {
     try {
@@ -203,7 +235,7 @@ export class UserService {
   }
 
   /**
-   * Refuser un médecin ou secrétaire (admin uniquement)
+   * Refuser un médecin ou secrétaire
    */
   async refuserUtilisateur(userId: string, userType: 'medecin' | 'secretaire'): Promise<void> {
     try {
@@ -218,7 +250,7 @@ export class UserService {
   }
 
   /**
-   * Récupérer tous les utilisateurs en attente (admin uniquement)
+   * Récupérer tous les utilisateurs en attente
    */
   async getUtilisateursEnAttente(userType: 'medecin' | 'secretaire'): Promise<User[]> {
     try {

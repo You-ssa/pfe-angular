@@ -24,9 +24,16 @@
         type="button">
         <i class="fas fa-user-tie"></i> Secrétaire
       </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="userType === 'admin'"
+        (click)="userType = 'admin'"
+        type="button">
+        <i class="fas fa-user-shield"></i> Admin
+      </button>
     </div>
 
-    <h2>Connexion</h2>
+    <h2>Connexion {{ userType === 'admin' ? 'Administrateur' : '' }}</h2>
 
     <form (ngSubmit)="login()">
       <!-- Email -->
@@ -74,8 +81,8 @@
       </button>
     </form>
 
-    <!-- Lien vers inscription -->
-    <div class="auth-footer">
+    <!-- Lien vers inscription (pas pour admin) -->
+    <div class="auth-footer" *ngIf="userType !== 'admin'">
       Pas encore de compte ? 
       <a (click)="goToRegister()" style="cursor: pointer;">Créer un compte</a>
     </div>

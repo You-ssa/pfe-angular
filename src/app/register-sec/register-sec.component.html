@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <div class="auth-container">
   <div class="auth-card">
-    <!-- Tabs de sélection du type d'utilisateur -->
+    <!-- Tabs -->
     <div class="user-type-tabs">
       <button 
         class="tab-btn"
@@ -25,6 +25,29 @@
     <h2>Inscription Secrétaire</h2>
 
     <form (ngSubmit)="registerSec()">
+      <!-- Photo de profil -->
+      <div class="form-group photo-upload">
+        <label>Photo de profil</label>
+        <div class="photo-preview-container">
+          <div class="photo-preview" *ngIf="photoPreview">
+            <img [src]="photoPreview" alt="Prévisualisation">
+          </div>
+          <div class="photo-placeholder" *ngIf="!photoPreview">
+            <i class="fas fa-camera"></i>
+            <p>Cliquez pour ajouter une photo</p>
+          </div>
+          <input
+            type="file"
+            id="photo"
+            accept="image/*"
+            (change)="onPhotoSelected($event)"
+            style="display: none;">
+          <label for="photo" class="photo-btn">
+            <i class="fas fa-upload"></i> Choisir une photo
+          </label>
+        </div>
+      </div>
+
       <!-- Nom et Prénom -->
       <div class="form-row">
         <div class="form-group">
@@ -65,6 +88,72 @@
         </select>
       </div>
 
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="votre@email.com"
+          required>
+      </div>
+
+      <!-- Téléphone -->
+      <div class="form-group">
+        <label for="telephone">Téléphone *</label>
+        <input
+          type="tel"
+          id="telephone"
+          [(ngModel)]="telephone"
+          name="telephone"
+          placeholder="+216 XX XXX XXX"
+          required>
+      </div>
+
+      <!-- Spécialité (repris du médecin pour cohérence) -->
+      <div class="form-group">
+        <label for="specialite">Spécialité médicale du département *</label>
+        <select
+          id="specialite"
+          [(ngModel)]="specialite"
+          name="specialite"
+          required>
+          <option value="">Sélectionner une spécialité</option>
+          <option *ngFor="let spec of specialites" [value]="spec">
+            {{ spec }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Numéro RPPS (optionnel pour secrétaire) -->
+      <div class="form-group">
+        <label for="rpps">Numéro d'identification professionnelle</label>
+        <input
+          type="text"
+          id="rpps"
+          [(ngModel)]="rpps"
+          name="rpps"
+          placeholder="Optionnel"
+          maxlength="11">
+        <small class="help-text">
+          <i class="fas fa-info-circle"></i> Optionnel pour les secrétaires
+        </small>
+      </div>
+
+      <!-- Adresse hôpital / cabinet -->
+      <div class="form-group">
+        <label for="adresseHopital">Adresse hôpital / cabinet *</label>
+        <textarea
+          id="adresseHopital"
+          [(ngModel)]="adresseHopital"
+          name="adresseHopital"
+          placeholder="Adresse complète de votre lieu d'exercice"
+          rows="3"
+          required></textarea>
+      </div>
+
       <!-- Poste -->
       <div class="form-group">
         <label for="poste">Poste *</label>
@@ -93,30 +182,6 @@
             {{ d }}
           </option>
         </select>
-      </div>
-
-      <!-- Email -->
-      <div class="form-group">
-        <label for="email">Email *</label>
-        <input
-          type="email"
-          id="email"
-          [(ngModel)]="email"
-          name="email"
-          placeholder="votre@email.com"
-          required>
-      </div>
-
-      <!-- Téléphone -->
-      <div class="form-group">
-        <label for="telephone">Téléphone *</label>
-        <input
-          type="tel"
-          id="telephone"
-          [(ngModel)]="telephone"
-          name="telephone"
-          placeholder="+216 XX XXX XXX"
-          required>
       </div>
 
       <!-- Mot de passe -->
@@ -173,7 +238,7 @@
       <button 
         type="submit" 
         class="btn-primary"
-        [disabled]="isLoading">
+        [disabled]="isLoading || !acceptConditions">
         <span *ngIf="!isLoading">
           <i class="fas fa-user-plus"></i> Créer mon compte
         </span>

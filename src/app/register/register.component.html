@@ -30,28 +30,67 @@
     </div>
 
     <form (ngSubmit)="registerPatient()" *ngIf="!dataLoading">
-      <!-- Nom -->
-      <div class="form-group">
-        <label for="nom">Nom *</label>
-        <input
-          type="text"
-          id="nom"
-          [(ngModel)]="nom"
-          name="nom"
-          placeholder="Votre nom"
-          required>
+      <!-- Photo de profil -->
+      <div class="form-group photo-upload">
+        <label>Photo de profil</label>
+        <div class="photo-preview-container">
+          <div class="photo-preview" *ngIf="photoPreview">
+            <img [src]="photoPreview" alt="Prévisualisation">
+          </div>
+          <div class="photo-placeholder" *ngIf="!photoPreview">
+            <i class="fas fa-camera"></i>
+            <p>Cliquez pour ajouter une photo</p>
+          </div>
+          <input
+            type="file"
+            id="photo"
+            accept="image/*"
+            (change)="onPhotoSelected($event)"
+            style="display: none;">
+          <label for="photo" class="photo-btn">
+            <i class="fas fa-upload"></i> Choisir une photo
+          </label>
+        </div>
       </div>
 
-      <!-- Prénom -->
+      <!-- Nom et Prénom -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nom">Nom *</label>
+          <input
+            type="text"
+            id="nom"
+            [(ngModel)]="nom"
+            name="nom"
+            placeholder="Nom"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="prenom">Prénom *</label>
+          <input
+            type="text"
+            id="prenom"
+            [(ngModel)]="prenom"
+            name="prenom"
+            placeholder="Prénom"
+            required>
+        </div>
+      </div>
+
+      <!-- Sexe -->
       <div class="form-group">
-        <label for="prenom">Prénom *</label>
-        <input
-          type="text"
-          id="prenom"
-          [(ngModel)]="prenom"
-          name="prenom"
-          placeholder="Votre prénom"
+        <label for="sexe">Sexe *</label>
+        <select
+          id="sexe"
+          [(ngModel)]="sexe"
+          name="sexe"
           required>
+          <option value="">Sélectionner</option>
+          <option value="Homme">Homme</option>
+          <option value="Femme">Femme</option>
+          <option value="Autre">Autre</option>
+        </select>
       </div>
 
       <!-- Email -->
@@ -173,7 +212,7 @@
       <button 
         type="submit" 
         class="btn-primary"
-        [disabled]="isLoading">
+        [disabled]="isLoading || !acceptConditions">
         <span *ngIf="!isLoading">
           <i class="fas fa-user-plus"></i> Créer mon compte
         </span>

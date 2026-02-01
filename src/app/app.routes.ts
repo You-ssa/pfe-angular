@@ -10,6 +10,8 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { HomeUserComponent } from './home-user/home-user.component';
 import { HomeMedComponent } from './home-med/home-med.component';
 import { HomeSecComponent } from './home-sec/home-sec.component';
+import { AdminComponent } from './admin/admin.component';
+import { InitAdminComponent } from './init-admin/init-admin.component';
 
 export const routes: Routes = [
   // Page d'accueil
@@ -24,17 +26,19 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   
   // Inscriptions
-  { path: 'register', component: RegisterComponent },          // Patient
-  { path: 'register-med', component: RegisterMedComponent },   // Médecin
-  { path: 'register-sec', component: RegisterSecComponent },   // Secrétaire
+  { path: 'register', component: RegisterComponent },
+  { path: 'register-med', component: RegisterMedComponent },
+  { path: 'register-sec', component: RegisterSecComponent },
   
-  // Espaces utilisateurs (protégés - à ajouter guards plus tard)
-  { path: 'home-user', component: HomeUserComponent },         // Patient
-  { path: 'home-med', component: HomeMedComponent },           // Médecin
-  { path: 'home-sec', component: HomeSecComponent },           // Secrétaire
+  // Espaces utilisateurs
+  { path: 'home-user', component: HomeUserComponent },
+  { path: 'home-med', component: HomeMedComponent },
+  { path: 'home-sec', component: HomeSecComponent },
   
-  // Admin (à créer)
-  // { path: 'admin', component: AdminComponent },
+  // Admin
+  { path: 'admin', component: AdminComponent },
+    { path: 'init-admin', component: InitAdminComponent },
+
   
   // Redirection 404
   { path: '**', redirectTo: '' }

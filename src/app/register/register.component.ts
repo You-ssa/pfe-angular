@@ -13,12 +13,10 @@ import { PaysService, Pays } from '../services/pays.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  // Type d'utilisateur (pour navigation)
-  userType: 'patient' | 'medecin' | 'secretaire' = 'patient';
-
   // Données du formulaire
   nom = '';
   prenom = '';
+  sexe = '';
   email = '';
   pays = '';
   ville = '';
@@ -26,6 +24,10 @@ export class RegisterComponent implements OnInit {
   motDePasse = '';
   confMotDePasse = '';
   acceptConditions = false;
+
+  // Photo
+  photoFile?: File;
+  photoPreview?: string;
 
   // Listes pour les sélections
   paysList: Pays[] = [];
@@ -85,6 +87,23 @@ export class RegisterComponent implements OnInit {
   }
 
   /**
+   * Gérer la sélection de photo
+   */
+  onPhotoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.photoFile = input.files[0];
+      
+      // Prévisualisation
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.photoPreview = e.target.result;
+      };
+      reader.readAsDataURL(this.photoFile);
+    }
+  }
+
+  /**
    * Inscription patient
    */
   async registerPatient() {
@@ -93,7 +112,7 @@ export class RegisterComponent implements OnInit {
     this.isLoading = true;
 
     // Validation des champs
-    if (!this.nom || !this.prenom || !this.email || !this.pays || 
+    if (!this.nom || !this.prenom || !this.sexe || !this.email || !this.pays || 
         !this.ville || !this.telephone || !this.motDePasse) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
       this.isLoading = false;
@@ -125,6 +144,7 @@ export class RegisterComponent implements OnInit {
       const user: User = {
         nom: this.nom,
         prenom: this.prenom,
+        sexe: this.sexe,
         email: this.email,
         pays: this.pays,
         ville: this.ville,
@@ -134,7 +154,7 @@ export class RegisterComponent implements OnInit {
         dateInscription: new Date().toISOString()
       };
 
-      await this.userService.createPatient(user);
+      await this.userService.createPatient(user, this.photoFile);
 
       this.successMessage = 'Compte créé avec succès ! Redirection vers la connexion...';
       setTimeout(() => {
@@ -149,16 +169,10 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  /**
-   * Naviguer vers inscription médecin
-   */
   goToRegisterMedecin() {
     this.router.navigate(['/register-med']);
   }
 
-  /**
-   * Naviguer vers inscription secrétaire
-   */
   goToRegisterSecretaire() {
     this.router.navigate(['/register-sec']);
   }

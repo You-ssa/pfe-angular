@@ -12,25 +12,53 @@ import { UserService, User } from '../services/user.service';
   styleUrls: ['./register-sec.component.css']
 })
 export class RegisterSecComponent {
-  // Type d'utilisateur (pour navigation)
-  userType: 'patient' | 'medecin' | 'secretaire' = 'secretaire';
-
   // Données du formulaire
   nom = '';
   prenom = '';
   sexe = '';
-  poste = '';
-  departement = '';
   email = '';
   telephone = '';
+  specialite = '';
+  rpps = '';
+  adresseHopital = '';
+  poste = '';
+  departement = '';
   motDePasse = '';
   confMotDePasse = '';
   acceptConditions = false;
+
+  // Photo
+  photoFile?: File;
+  photoPreview?: string;
 
   // Messages
   errorMessage = '';
   successMessage = '';
   isLoading = false;
+
+  // Liste des spécialités (même que médecin)
+  specialites = [
+    'Médecine générale',
+    'Cardiologie',
+    'Dermatologie',
+    'Endocrinologie',
+    'Gastro-entérologie',
+    'Gériatrie',
+    'Gynécologie',
+    'Néphrologie',
+    'Neurologie',
+    'Ophtalmologie',
+    'ORL',
+    'Pédiatrie',
+    'Pneumologie',
+    'Psychiatrie',
+    'Radiologie',
+    'Rhumatologie',
+    'Urologie',
+    'Chirurgie générale',
+    'Anesthésie',
+    'Autre'
+  ];
 
   // Liste des postes
   postes = [
@@ -63,6 +91,23 @@ export class RegisterSecComponent {
   ) {}
 
   /**
+   * Gérer la sélection de photo
+   */
+  onPhotoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.photoFile = input.files[0];
+      
+      // Prévisualisation
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.photoPreview = e.target.result;
+      };
+      reader.readAsDataURL(this.photoFile);
+    }
+  }
+
+  /**
    * Inscription secrétaire
    */
   async registerSec() {
@@ -71,8 +116,9 @@ export class RegisterSecComponent {
     this.isLoading = true;
 
     // Validation des champs
-    if (!this.nom || !this.prenom || !this.sexe || !this.poste || 
-        !this.departement || !this.email || !this.telephone || !this.motDePasse) {
+    if (!this.nom || !this.prenom || !this.sexe || !this.email || 
+        !this.telephone || !this.specialite || !this.adresseHopital ||
+        !this.poste || !this.departement || !this.motDePasse) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
       this.isLoading = false;
       return;
@@ -104,20 +150,22 @@ export class RegisterSecComponent {
         nom: this.nom,
         prenom: this.prenom,
         sexe: this.sexe,
-        poste: this.poste,
-        departement: this.departement,
         email: this.email,
         telephone: this.telephone,
+        specialite: this.specialite,
+        rpps: this.rpps || undefined,
+        adresseHopital: this.adresseHopital,
+        poste: this.poste,
+        departement: this.departement,
         motDePasse: this.motDePasse,
         userType: 'secretaire',
         statut: 'en_attente',
         dateInscription: new Date().toISOString()
       };
 
-      // Créer le secrétaire
-      await this.userService.createSecretaire(user);
+      await this.userService.createSecretaire(user, this.photoFile);
 
-      this.successMessage = 'Demande d\'inscription envoyée ! Votre compte sera activé après validation par l\'administrateur. Vous recevrez un email de confirmation.';
+      this.successMessage = 'Demande d\'inscription envoyée ! Votre compte sera activé après validation par l\'administrateur.';
       
       setTimeout(() => {
         this.router.navigate(['/login']);
@@ -131,16 +179,10 @@ export class RegisterSecComponent {
     }
   }
 
-  /**
-   * Naviguer vers inscription patient
-   */
   goToRegisterPatient() {
     this.router.navigate(['/register']);
   }
 
-  /**
-   * Naviguer vers inscription médecin
-   */
   goToRegisterMedecin() {
     this.router.navigate(['/register-med']);
   }
