@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, query, where, getDocs, doc, updateDoc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, query, where, getDocs, doc, updateDoc, deleteDoc } from '@angular/fire/firestore';
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 export interface User {
@@ -76,8 +76,8 @@ export class UserService {
       user.statut = 'en_attente';
       user.dateInscription = new Date().toISOString();
       
-      await addDoc(collection(this.firestore, 'medecins'), user);
-      console.log('✅ Médecin créé - En attente d\'approbation');
+      const docRef = await addDoc(collection(this.firestore, 'medecins'), user);
+      console.log('✅ Médecin créé - En attente d\'approbation - ID:', docRef.id);
     } catch (error) {
       console.error('❌ Erreur création médecin:', error);
       throw error;
@@ -100,8 +100,8 @@ export class UserService {
       user.statut = 'en_attente';
       user.dateInscription = new Date().toISOString();
       
-      await addDoc(collection(this.firestore, 'secretaires'), user);
-      console.log('✅ Secrétaire créé - En attente d\'approbation');
+      const docRef = await addDoc(collection(this.firestore, 'secretaires'), user);
+      console.log('✅ Secrétaire créé - En attente d\'approbation - ID:', docRef.id);
     } catch (error) {
       console.error('❌ Erreur création secrétaire:', error);
       throw error;
@@ -129,22 +129,10 @@ export class UserService {
    */
   async login(email: string, motDePasse: string, userType: string): Promise<User | null> {
     try {
-      let collectionName = '';
-      switch (userType) {
-        case 'patient':
-          collectionName = 'patients';
-          break;
-        case 'medecin':
-          collectionName = 'medecins';
-          break;
-        case 'secretaire':
-          collectionName = 'secretaires';
-          break;
-        case 'admin':
-          collectionName = 'admins';
-          break;
-        default:
-          return null;
+      const collectionName = this.getCollectionName(userType);
+      if (!collectionName) {
+        console.log('❌ Type d\'utilisateur invalide');
+        return null;
       }
 
       const q = query(
@@ -155,7 +143,7 @@ export class UserService {
       const snapshot = await getDocs(q);
       
       if (snapshot.empty) {
-        console.log('❌ Aucun utilisateur trouvé');
+        console.log('❌ Aucun utilisateur trouvé avec cet email');
         return null;
       }
 
@@ -171,15 +159,15 @@ export class UserService {
 
       // Vérifier si médecin/secrétaire est approuvé
       if ((userType === 'medecin' || userType === 'secretaire') && user.statut !== 'approuve') {
-        console.log('❌ Compte en attente d\'approbation');
-        return null;
+        console.log('❌ Compte en attente d\'approbation ou refusé');
+        throw new Error('Votre compte est en attente de validation par un administrateur');
       }
 
       console.log('✅ Connexion réussie:', user.email);
       return user;
     } catch (error) {
       console.error('❌ Erreur lors de la connexion:', error);
-      return null;
+      throw error;
     }
   }
 
@@ -188,22 +176,9 @@ export class UserService {
    */
   async emailExists(email: string, userType: string): Promise<boolean> {
     try {
-      let collectionName = '';
-      switch (userType) {
-        case 'patient':
-          collectionName = 'patients';
-          break;
-        case 'medecin':
-          collectionName = 'medecins';
-          break;
-        case 'secretaire':
-          collectionName = 'secretaires';
-          break;
-        case 'admin':
-          collectionName = 'admins';
-          break;
-        default:
-          return false;
+      const collectionName = this.getCollectionName(userType);
+      if (!collectionName) {
+        return false;
       }
 
       const q = query(
@@ -212,7 +187,13 @@ export class UserService {
       );
       
       const snapshot = await getDocs(q);
-      return !snapshot.empty;
+      const exists = !snapshot.empty;
+      
+      if (exists) {
+        console.log('⚠️ Email déjà utilisé:', email);
+      }
+      
+      return exists;
     } catch (error) {
       console.error('❌ Erreur vérification email:', error);
       return false;
@@ -224,10 +205,19 @@ export class UserService {
    */
   async approuverUtilisateur(userId: string, userType: 'medecin' | 'secretaire'): Promise<void> {
     try {
+      if (!userId) {
+        throw new Error('ID utilisateur manquant');
+      }
+
       const collectionName = userType === 'medecin' ? 'medecins' : 'secretaires';
       const docRef = doc(this.firestore, collectionName, userId);
-      await updateDoc(docRef, { statut: 'approuve' });
-      console.log(`✅ ${userType} approuvé avec succès`);
+      
+      await updateDoc(docRef, { 
+        statut: 'approuve',
+        dateApprobation: new Date().toISOString()
+      });
+      
+      console.log(`✅ ${userType} approuvé avec succès - ID: ${userId}`);
     } catch (error) {
       console.error('❌ Erreur approbation:', error);
       throw error;
@@ -239,10 +229,24 @@ export class UserService {
    */
   async refuserUtilisateur(userId: string, userType: 'medecin' | 'secretaire'): Promise<void> {
     try {
+      if (!userId) {
+        throw new Error('ID utilisateur manquant');
+      }
+
       const collectionName = userType === 'medecin' ? 'medecins' : 'secretaires';
       const docRef = doc(this.firestore, collectionName, userId);
-      await updateDoc(docRef, { statut: 'refuse' });
-      console.log(`✅ ${userType} refusé`);
+      
+      // Option 1: Supprimer complètement l'utilisateur
+      await deleteDoc(docRef);
+      console.log(`✅ ${userType} refusé et supprimé - ID: ${userId}`);
+      
+      // Option 2: Marquer comme refusé (décommentez si vous préférez garder l'historique)
+      // await updateDoc(docRef, { 
+      //   statut: 'refuse',
+      //   dateRefus: new Date().toISOString()
+      // });
+      // console.log(`✅ ${userType} refusé - ID: ${userId}`);
+      
     } catch (error) {
       console.error('❌ Erreur refus:', error);
       throw error;
@@ -252,26 +256,131 @@ export class UserService {
   /**
    * Récupérer tous les utilisateurs en attente
    */
-  async getUtilisateursEnAttente(userType: 'medecin' | 'secretaire'): Promise<User[]> {
+  /**
+ * Récupérer les médecins ou secrétaires en attente
+ */
+async getUtilisateursEnAttente(
+  userType: 'medecin' | 'secretaire'
+): Promise<User[]> {
+  try {
+    const collectionName =
+      userType === 'medecin' ? 'medecins' : 'secretaires';
+
+    const q = query(
+      collection(this.firestore, collectionName),
+      where('statut', '==', 'en_attente')
+    );
+
+    const snapshot = await getDocs(q);
+
+    const users: User[] = [];
+
+    snapshot.forEach(docSnap => {
+      const user = docSnap.data() as User;
+      user.id = docSnap.id;
+      users.push(user);
+    });
+
+    return users;
+  } catch (error) {
+    console.error('❌ Erreur récupération utilisateurs en attente:', error);
+    return [];
+  }
+}
+
+  /**
+   * Obtenir le nom de la collection selon le type d'utilisateur
+   */
+  private getCollectionName(userType: string): string {
+    switch (userType) {
+      case 'patient':
+        return 'patients';
+      case 'medecin':
+        return 'medecins';
+      case 'secretaire':
+        return 'secretaires';
+      case 'admin':
+        return 'admins';
+      default:
+        console.error('❌ Type d\'utilisateur invalide:', userType);
+        return '';
+    }
+  }
+
+  /**
+   * Récupérer un utilisateur par ID
+   */
+  async getUserById(userId: string, userType: string): Promise<User | null> {
     try {
-      const collectionName = userType === 'medecin' ? 'medecins' : 'secretaires';
+      const collectionName = this.getCollectionName(userType);
+      if (!collectionName) {
+        return null;
+      }
+
+      const docRef = doc(this.firestore, collectionName, userId);
+      const docSnap = await getDocs(query(collection(this.firestore, collectionName), where('__name__', '==', userId)));
+      
+      if (!docSnap.empty) {
+        const user = docSnap.docs[0].data() as User;
+        user.id = docSnap.docs[0].id;
+        return user;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('❌ Erreur récupération utilisateur:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Récupérer tous les médecins approuvés
+   */
+  async getMedecinsApprouves(): Promise<User[]> {
+    try {
       const q = query(
-        collection(this.firestore, collectionName),
-        where('statut', '==', 'en_attente')
+        collection(this.firestore, 'medecins'),
+        where('statut', '==', 'approuve')
       );
       
       const snapshot = await getDocs(q);
-      const utilisateurs: User[] = [];
+      const medecins: User[] = [];
       
       snapshot.forEach(doc => {
         const user = doc.data() as User;
         user.id = doc.id;
-        utilisateurs.push(user);
+        medecins.push(user);
       });
       
-      return utilisateurs;
+      return medecins;
     } catch (error) {
-      console.error('❌ Erreur récupération utilisateurs en attente:', error);
+      console.error('❌ Erreur récupération médecins approuvés:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Récupérer tous les secrétaires approuvés
+   */
+  async getSecretairesApprouves(): Promise<User[]> {
+    try {
+      const q = query(
+        collection(this.firestore, 'secretaires'),
+        where('statut', '==', 'approuve')
+      );
+      
+      const snapshot = await getDocs(q);
+      const secretaires: User[] = [];
+      
+      snapshot.forEach(doc => {
+        const user = doc.data() as User;
+        user.id = doc.id;
+        secretaires.push(user);
+      });
+      
+      return secretaires;
+    } catch (error) {
+      console.error('❌ Erreur récupération secrétaires approuvés:', error);
       return [];
     }
   }

@@ -1,90 +1,64 @@
-<!DOCTYPE html>
 <div class="auth-container">
-  <div class="auth-card">
-    <!-- Tabs de sélection du type d'utilisateur -->
-    <div class="user-type-tabs">
-      <button 
-        class="tab-btn" 
-        [class.active]="userType === 'patient'"
-        (click)="userType = 'patient'"
-        type="button">
-        <i class="fas fa-user"></i> Patient
-      </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="userType === 'medecin'"
-        (click)="userType = 'medecin'"
-        type="button">
-        <i class="fas fa-user-md"></i> Médecin
-      </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="userType === 'secretaire'"
-        (click)="userType = 'secretaire'"
-        type="button">
-        <i class="fas fa-user-tie"></i> Secrétaire
-      </button>
-      <button 
-        class="tab-btn" 
-        [class.active]="userType === 'admin'"
-        (click)="userType = 'admin'"
-        type="button">
-        <i class="fas fa-user-shield"></i> Admin
-      </button>
+  <div class="auth-wrapper">
+    <!-- Formulaire Login -->
+    <div class="auth-card">
+
+      <div class="user-type-tabs">
+        <button 
+          class="tab-btn" 
+          [class.active]="userType === 'patient'"
+          (click)="userType = 'patient'" type="button">
+          <i class="fas fa-user"></i> Patient
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="userType === 'medecin'"
+          (click)="userType = 'medecin'" type="button">
+          <i class="fas fa-user-md"></i> Médecin
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="userType === 'secretaire'"
+          (click)="userType = 'secretaire'" type="button">
+          <i class="fas fa-user-tie"></i> Secrétaire
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="userType === 'admin'"
+          (click)="userType = 'admin'" type="button">
+          <i class="fas fa-user-shield"></i> Admin
+        </button>
+      </div>
+<h2 [innerHTML]="getPhraseForUser()"></h2>
+
+      <form (ngSubmit)="login()">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="votre@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="motDePasse">Mot de passe</label>
+          <input type="password" id="motDePasse" [(ngModel)]="motDePasse" name="motDePasse" placeholder="••••••••" required>
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Se connecter</span>
+          <span *ngIf="isLoading">Connexion...</span>
+        </button>
+      </form>
+
+      <div class="auth-footer" *ngIf="userType !== 'admin'">
+        Pas encore de compte ? <a (click)="goToRegister()">Créer un compte</a>
+      </div>
     </div>
 
-    <h2>Connexion {{ userType === 'admin' ? 'Administrateur' : '' }}</h2>
-
-    <form (ngSubmit)="login()">
-      <!-- Email -->
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          [(ngModel)]="email"
-          name="email"
-          placeholder="votre@email.com"
-          required
-          autocomplete="email">
-      </div>
-
-      <!-- Mot de passe -->
-      <div class="form-group">
-        <label for="motDePasse">Mot de passe</label>
-        <input
-          type="password"
-          id="motDePasse"
-          [(ngModel)]="motDePasse"
-          name="motDePasse"
-          placeholder="••••••••"
-          required
-          autocomplete="current-password">
-      </div>
-
-      <!-- Message d'erreur -->
-      <div class="error-message" *ngIf="errorMessage">
-        <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
-      </div>
-
-      <!-- Bouton de connexion -->
-      <button 
-        type="submit" 
-        class="btn-primary"
-        [disabled]="isLoading">
-        <span *ngIf="!isLoading">
-          <i class="fas fa-sign-in-alt"></i> Se connecter
-        </span>
-        <span *ngIf="isLoading">
-          <i class="fas fa-spinner fa-spin"></i> Connexion...
-        </span>
-      </button>
-    </form>
-
-    <!-- Lien vers inscription (pas pour admin) -->
-    <div class="auth-footer" *ngIf="userType !== 'admin'">
-      Pas encore de compte ? 
-      <a (click)="goToRegister()" style="cursor: pointer;">Créer un compte</a>
-    </div>
+    <!-- Image à droite -->
+<!-- Image à droite -->
+<div class="auth-image" [style.background-image]="'url(' + getImageForUser() + ')'"></div>
   </div>
 </div>

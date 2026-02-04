@@ -108,4 +108,34 @@ export class LoginComponent {
         this.router.navigate(['/register']);
     }
   }
+getImageForUser(): string {
+  switch (this.userType) {
+    case 'patient':
+      return 'assets/pat.jpg';
+    case 'medecin':
+      return 'assets/medc.jpg';
+    case 'secretaire':
+      return 'assets/secr.jpg';
+    case 'admin':
+      return 'assets/admin.png';
+    default:
+      return 'assets/default.png';
+  }
 }
+getPhraseForUser(): string {
+  switch (this.userType) {
+    case 'patient':
+      return 'Restez fort et positif, nous sommes là';
+    case 'medecin':
+      return 'Vous êtes l’espoir de chaque patient';
+    case 'secretaire':
+      return 'Accueil chaleureux, travail parfait';
+    case 'admin':
+      return 'Vous êtes le pilier de notre réussite<br>Reste fort';
+    default:
+      return 'Bienvenue';
+  }
+}
+
+
+} 

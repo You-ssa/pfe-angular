@@ -5,13 +5,14 @@
   <a href="#histoire" data-tooltip="Histoire" (click)="scrollToSection('#histoire', $event)"></a>
   <a href="#statistiques" data-tooltip="Chiffres" (click)="scrollToSection('#statistiques', $event)"></a>
   <a href="#services" data-tooltip="Services" (click)="scrollToSection('#services', $event)"></a>
+  <a href="#localisation" data-tooltip="Localisation" (click)="scrollToSection('#localisation', $event)"></a>
   <a href="#contact" data-tooltip="Contact" (click)="scrollToSection('#contact', $event)"></a>
 </nav>
 
 <!-- Hero Section -->
 <section id="hero" class="hero-section">
   <div class="hero-particles"></div>
-  <div class="hero-pattern"></div>
+  <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-badge">
       <span class="badge-icon">⚕️</span>
@@ -97,20 +98,150 @@
       </p>
     </div>
 
-    <div class="timeline-wrapper">
-      <div class="timeline-line"></div>
-      
-      <div class="timeline-item" *ngFor="let item of timeline; let i = index" [class.even]="i % 2 === 1">
-        <div class="timeline-content">
-          <div class="timeline-card">
-            <div class="timeline-year">{{ item.year }}</div>
-            <h3 class="timeline-title">{{ item.title }}</h3>
-            <p class="timeline-description">{{ item.description }}</p>
+    <div class="history-content">
+      <div class="timeline-simple">
+        <div class="history-item scroll-reveal" *ngFor="let item of timeline; let i = index">
+          <div class="history-year">{{ item.year }}</div>
+          <div class="history-dot"></div>
+          <div class="history-content-card">
+            <h3 class="history-title">{{ item.title }}</h3>
+            <p class="history-description">{{ item.description }}</p>
           </div>
         </div>
-        <div class="timeline-dot"></div>
-        <div class="timeline-content"></div>
       </div>
+      
+      <!-- Section additionnelle avec image -->
+<section id="localisation" class="section location-section">
+  <div class="container">
+    <div class="section-header scroll-reveal">
+      <span class="section-tag">Nous Trouver</span>
+      <h2 class="section-title">Localisation & Accès</h2>
+      <p class="section-description">
+        Situé au cœur de Monastir, le CHU Fattouma-Bourguiba est facilement accessible depuis toutes les régions.
+      </p>
+    </div>
+
+    <div class="location-content">
+      <!-- Informations d'adresse -->
+      <div class="address-info scroll-reveal">
+        <div class="address-card">
+          <div class="address-icon">📍</div>
+          <h3>Adresse & Coordonnées</h3>
+          <address class="address-details">
+            <strong>CHU Fattouma-Bourguiba</strong><br>
+            Avenue Farhat-Hached et rue du 1er-Juin 1995<br>
+            5000 Monastir, Tunisie<br><br>
+            
+            <strong>Coordonnées GPS :</strong><br>
+            35.7770° N, 10.8268° E<br><br>
+            
+            <strong>Téléphone :</strong><br>
+            (+216) 73 462 600<br><br>
+            
+            <strong>Fax :</strong><br>
+            (+216) 73 462 705<br><br>
+            
+            <strong>Email :</strong><br>
+            contact&#64;hopitalfattoumabourguiba.tn
+          </address>
+          
+          
+        </div>
+      </div>
+      
+      <!-- Carte Leaflet -->
+      <div class="map-container scroll-reveal">
+        <div id="map" class="leaflet-map">
+          <div class="map-overlay"></div>
+        </div>
+        <div class="map-actions">
+          <button (click)="openGoogleMaps()" class="map-button">
+            📍 Ouvrir dans Google Maps
+          </button>
+          <button (click)="getDirections()" class="map-button">
+            🚗 Itinéraire vers l'hôpital
+          </button>
+          <button (click)="resetMapView()" class="map-button secondary">
+            🔄 Recentrer la carte
+          </button>
+        </div>
+        <div class="transport-options">
+            <h4>📍 Accès & Transport</h4>
+            <div class="transport-grid">
+              <div class="transport-item">
+                <div class="transport-icon">🚌</div>
+                <div class="transport-text">
+                  <strong>Bus urbains</strong>
+                  <div>Lignes 2, 3, 5, 10</div>
+                </div>
+              </div>
+              <div class="transport-item">
+                <div class="transport-icon">🚕</div>
+                <div class="transport-text">
+                  <strong>Taxi</strong>
+                  <div>Station principale devant l'hôpital</div>
+                </div>
+              </div>
+              <div class="transport-item">
+                <div class="transport-icon">🚗</div>
+                <div class="transport-text">
+                  <strong>Voiture</strong>
+                  <div>Parking gratuit disponible</div>
+                </div>
+              </div>
+              <div class="transport-item">
+                <div class="transport-icon">🛫</div>
+                <div class="transport-text">
+                  <strong>Aéroport</strong>
+                  <div>Monastir-Habib Bourguiba (10 min)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      
+    </div>
+    
+    <!-- Horaires & Informations pratiques -->
+    <div class="practical-info scroll-reveal">
+      <h3>📅 Horaires & Informations pratiques</h3>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon">🏥</div>
+          <div class="info-content">
+            <h4>Services d'Urgences</h4>
+            <p>Ouvert 24h/24, 7j/7</p>
+            <small>Tél: (+216) 73 462 610</small>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">💼</div>
+          <div class="info-content">
+            <h4>Administration</h4>
+            <p>Lun - Ven: 8h - 16h</p>
+            <small>Sam: 8h - 12h</small>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">👨‍⚕️</div>
+          <div class="info-content">
+            <h4>Consultations externes</h4>
+            <p>Lun - Ven: 8h - 14h</p>
+            <small>Sur rendez-vous</small>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🅿️</div>
+          <div class="info-content">
+            <h4>Parking</h4>
+            <p>Gratuit pour les patients</p>
+            <small>Capacité: 250 places</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
     </div>
   </div>
 </section>
@@ -170,6 +301,9 @@
     </div>
   </div>
 </section>
+
+<!-- Section Localisation (NOUVELLE POSITION) -->
+
 
 <!-- Laboratoires -->
 <section class="section labs-section">
