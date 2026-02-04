@@ -13,6 +13,11 @@ import { PaysService, Pays } from '../services/pays.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+
+  // Formulaire multi-étapes
+  currentStep = 1;
+  totalSteps = 3;
+
   // Données du formulaire
   nom = '';
   prenom = '';
@@ -53,9 +58,7 @@ export class RegisterComponent implements OnInit {
     await this.loadPays();
   }
 
-  /**
-   * Charger la liste des pays
-   */
+  // Charger la liste des pays
   async loadPays() {
     try {
       this.dataLoading = true;
@@ -69,16 +72,23 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  /**
-   * Gérer le changement de pays
-   */
+  // Étapes
+  nextStep() {
+    if (this.currentStep < this.totalSteps) this.currentStep++;
+  }
+
+  prevStep() {
+    if (this.currentStep > 1) this.currentStep--;
+  }
+
+  // Gérer le changement de pays
   onPaysChange() {
     const selectedPays = this.paysList.find(p => p.nom === this.pays);
     if (selectedPays) {
       this.villesList = selectedPays.villes || [];
       this.phonePrefix = selectedPays.indicatif;
       this.phoneHelpText = `Format: ${selectedPays.formatTel || 'XX XXX XXX'}`;
-      this.ville = ''; // Reset ville
+      this.ville = '';
     } else {
       this.villesList = [];
       this.phonePrefix = '';
@@ -86,32 +96,23 @@ export class RegisterComponent implements OnInit {
     }
   }
 
-  /**
-   * Gérer la sélection de photo
-   */
+  // Gérer la sélection de photo
   onPhotoSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.photoFile = input.files[0];
-      
-      // Prévisualisation
       const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.photoPreview = e.target.result;
-      };
+      reader.onload = (e: any) => this.photoPreview = e.target.result;
       reader.readAsDataURL(this.photoFile);
     }
   }
 
-  /**
-   * Inscription patient
-   */
+  // Inscription patient
   async registerPatient() {
     this.errorMessage = '';
     this.successMessage = '';
     this.isLoading = true;
 
-    // Validation des champs
     if (!this.nom || !this.prenom || !this.sexe || !this.email || !this.pays || 
         !this.ville || !this.telephone || !this.motDePasse) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
@@ -119,21 +120,18 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    // Validation des mots de passe
     if (this.motDePasse !== this.confMotDePasse) {
       this.errorMessage = 'Les mots de passe ne correspondent pas';
       this.isLoading = false;
       return;
     }
 
-    // Validation des conditions
     if (!this.acceptConditions) {
       this.errorMessage = 'Vous devez accepter les conditions d\'utilisation';
       this.isLoading = false;
       return;
     }
 
-    // Vérifier si l'email existe déjà
     if (await this.userService.emailExists(this.email, 'patient')) {
       this.errorMessage = 'Cet email est déjà utilisé';
       this.isLoading = false;
@@ -157,9 +155,7 @@ export class RegisterComponent implements OnInit {
       await this.userService.createPatient(user, this.photoFile);
 
       this.successMessage = 'Compte créé avec succès ! Redirection vers la connexion...';
-      setTimeout(() => {
-        this.router.navigate(['/login']);
-      }, 2000);
+      setTimeout(() => this.router.navigate(['/login']), 2000);
 
     } catch (error) {
       console.error('Erreur lors de l\'inscription:', error);

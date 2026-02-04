@@ -89,6 +89,11 @@ export class RegisterSecComponent {
     private userService: UserService,
     private router: Router
   ) {}
+currentStep = 1;
+totalSteps = 4;
+
+nextStep() { if(this.currentStep < this.totalSteps) this.currentStep++; }
+prevStep() { if(this.currentStep > 1) this.currentStep--; }
 
   /**
    * Gérer la sélection de photo

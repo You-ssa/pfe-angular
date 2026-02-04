@@ -84,6 +84,11 @@ export class RegisterMedComponent {
       reader.readAsDataURL(this.photoFile);
     }
   }
+currentStep = 1;
+totalSteps = 3;
+
+nextStep() { if(this.currentStep < this.totalSteps) this.currentStep++; }
+prevStep() { if(this.currentStep > 1) this.currentStep--; }
 
   /**
    * Inscription médecin
