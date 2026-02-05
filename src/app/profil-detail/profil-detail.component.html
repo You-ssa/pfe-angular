@@ -1,0 +1,118 @@
+<div class="profil-modal-overlay" (click)="closeModal()" *ngIf="user">
+  <div class="profil-modal" (click)="$event.stopPropagation()">
+    
+    <!-- Bouton fermer -->
+    <button class="btn-close-modal" (click)="closeModal()">
+      <i class="fas fa-times"></i>
+    </button>
+
+    <!-- En-tête du profil -->
+    <div class="profil-header">
+      <div class="profil-photo-large">
+        <img [src]="user.photoBase64 || 'assets/default-avatar.png'" alt="Photo de profil">
+      </div>
+      <h2>{{ user.prenom }} {{ user.nom }}</h2>
+      <p class="profil-type">
+        <i [class]="getUserIcon()"></i> 
+        {{ user.userType === 'medecin' ? 'Médecin' : 'Secrétaire' }}
+      </p>
+      <span class="badge-statut" [class.en-attente]="user.statut === 'en_attente'">
+        <i class="fas fa-clock"></i> En attente de validation
+      </span>
+    </div>
+
+    <!-- Informations personnelles -->
+    <div class="profil-section">
+      <h3><i class="fas fa-user"></i> Informations personnelles</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <label><i class="fas fa-user"></i> Nom complet</label>
+          <p>{{ user.prenom }} {{ user.nom }}</p>
+        </div>
+        
+        <div class="info-item" *ngIf="user.sexe">
+          <label><i class="fas fa-venus-mars"></i> Sexe</label>
+          <p>{{ user.sexe }}</p>
+        </div>
+
+        <div class="info-item">
+          <label><i class="fas fa-envelope"></i> Email</label>
+          <p>{{ user.email }}</p>
+        </div>
+
+        <div class="info-item">
+          <label><i class="fas fa-phone"></i> Téléphone</label>
+          <p>{{ user.telephone }}</p>
+        </div>
+
+        <div class="info-item">
+          <label><i class="fas fa-calendar"></i> Date d'inscription</label>
+          <p>{{ formatDate(user.dateInscription) }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informations spécifiques MÉDECIN -->
+    <div class="profil-section" *ngIf="user.userType === 'medecin'">
+      <h3><i class="fas fa-stethoscope"></i> Informations professionnelles</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <label><i class="fas fa-stethoscope"></i> Spécialité</label>
+          <p>{{ user.specialite }}</p>
+        </div>
+
+        <div class="info-item">
+          <label><i class="fas fa-id-card"></i> Numéro RPPS</label>
+          <p>{{ user.rpps }}</p>
+        </div>
+
+        <div class="info-item full-width">
+          <label><i class="fas fa-hospital"></i> Adresse hôpital/cabinet</label>
+          <p>{{ user.adresseHopital }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informations spécifiques SECRÉTAIRE -->
+    <div class="profil-section" *ngIf="user.userType === 'secretaire'">
+      <h3><i class="fas fa-briefcase"></i> Informations professionnelles</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <label><i class="fas fa-stethoscope"></i> Spécialité</label>
+          <p>{{ user.specialite }}</p>
+        </div>
+
+        <div class="info-item">
+          <label><i class="fas fa-briefcase"></i> Poste</label>
+          <p>{{ user.poste }}</p>
+        </div>
+
+        <div class="info-item">
+          <label><i class="fas fa-building"></i> Département</label>
+          <p>{{ user.departement }}</p>
+        </div>
+
+        <div class="info-item" *ngIf="user.rpps">
+          <label><i class="fas fa-id-card"></i> Numéro d'identité</label>
+          <p>{{ user.rpps }}</p>
+        </div>
+
+        <div class="info-item full-width">
+          <label><i class="fas fa-hospital"></i> Adresse hôpital/cabinet</label>
+          <p>{{ user.adresseHopital }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="profil-actions">
+      <button class="btn-approve" (click)="onApprove()">
+        <i class="fas fa-check"></i> Approuver
+      </button>
+      <button class="btn-reject" (click)="onReject()">
+        <i class="fas fa-times"></i> Refuser
+      </button>
+    </div>
+
+  </div>
+</div>

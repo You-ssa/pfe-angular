@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService, User } from '../services/user.service';
+import { ProfilDetailComponent } from '../profil-detail/profil-detail.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProfilDetailComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
@@ -16,6 +17,9 @@ export class AdminComponent implements OnInit {
   
   medecinsEnAttente: User[] = [];
   secretairesEnAttente: User[] = [];
+  
+  // Utilisateur sélectionné pour affichage du profil détaillé
+  selectedUser: User | null = null;
   
   newAdmin = {
     nom: '',
@@ -49,7 +53,7 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * Charger les médecins en attente - CORRIGÉ
+   * Charger les médecins en attente
    */
   async loadMedecinsEnAttente() {
     try {
@@ -63,7 +67,7 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * Charger les secrétaires en attente - CORRIGÉ
+   * Charger les secrétaires en attente
    */
   async loadSecretairesEnAttente() {
     try {
@@ -77,7 +81,61 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * Approuver un médecin - CORRIGÉ
+   * Afficher le profil détaillé d'un utilisateur
+   */
+  showProfilDetail(user: User) {
+    this.selectedUser = user;
+    // Bloquer le scroll du body
+    document.body.style.overflow = 'hidden';
+  }
+
+  /**
+   * Fermer le profil détaillé
+   */
+  closeProfilDetail() {
+    this.selectedUser = null;
+    // Réactiver le scroll du body
+    document.body.style.overflow = 'auto';
+  }
+
+  /**
+   * Gérer l'approbation depuis le profil détaillé
+   */
+  async handleApprove(user: User) {
+    if (!user.id) return;
+
+    try {
+      if (user.userType === 'medecin') {
+        await this.approuverMedecin(user.id);
+      } else if (user.userType === 'secretaire') {
+        await this.approuverSecretaire(user.id);
+      }
+      this.closeProfilDetail();
+    } catch (error) {
+      console.error('Erreur lors de l\'approbation:', error);
+    }
+  }
+
+  /**
+   * Gérer le refus depuis le profil détaillé
+   */
+  async handleReject(user: User) {
+    if (!user.id) return;
+
+    try {
+      if (user.userType === 'medecin') {
+        await this.refuserMedecin(user.id);
+      } else if (user.userType === 'secretaire') {
+        await this.refuserSecretaire(user.id);
+      }
+      this.closeProfilDetail();
+    } catch (error) {
+      console.error('Erreur lors du refus:', error);
+    }
+  }
+
+  /**
+   * Approuver un médecin
    */
   async approuverMedecin(id: string) {
     if (!id) {
@@ -97,7 +155,7 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * Refuser un médecin - CORRIGÉ
+   * Refuser un médecin
    */
   async refuserMedecin(id: string) {
     if (!id) {
@@ -119,7 +177,7 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * Approuver un(e) secrétaire - CORRIGÉ
+   * Approuver un(e) secrétaire
    */
   async approuverSecretaire(id: string) {
     if (!id) {
@@ -139,7 +197,7 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * Refuser un(e) secrétaire - CORRIGÉ
+   * Refuser un(e) secrétaire
    */
   async refuserSecretaire(id: string) {
     if (!id) {
@@ -161,7 +219,7 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * Ajouter un administrateur - CORRIGÉ
+   * Ajouter un administrateur
    */
   async ajouterAdmin() {
     this.errorMessage = '';
