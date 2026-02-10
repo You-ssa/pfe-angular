@@ -38,16 +38,18 @@ export class VerificationService {
   }
 
   /**
-   * Demander une réinitialisation de mot de passe
-   */
-  async requestPasswordReset(email: string, userType: string): Promise<any> {
-    return firstValueFrom(
-      this.http.post(`${this.apiUrl}/api/password-reset/request`, {
-        email,
-        userType
-      })
-    );
-  }
+ * Demander une réinitialisation de mot de passe
+ */
+async requestPasswordReset(email: string, userType: string): Promise<any> {
+  return firstValueFrom(
+    this.http.post(`${this.apiUrl}/api/password-reset/request`, {
+      email,
+      userType
+    })
+  );
+}
+
+
 
   /**
    * Vérifier un token de réinitialisation
@@ -69,4 +71,5 @@ export class VerificationService {
       })
     );
   }
+  
 }

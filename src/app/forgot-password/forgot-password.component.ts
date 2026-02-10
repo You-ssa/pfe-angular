@@ -1,4 +1,3 @@
-// src/app/forgot-password/forgot-password.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -49,8 +48,14 @@ export class ForgotPasswordComponent {
         this.userType
       );
 
-      this.emailSent = true;
-      this.successMessage = response.message || 'Un email de réinitialisation a été envoyé si ce compte existe.';
+      // Vérifier si l'email existe ou non
+      if (response.exists === false) {
+        this.errorMessage = `Cette adresse email n'existe pas pour ${this.userType}`;
+        this.emailSent = false;
+      } else {
+        this.emailSent = true;
+        this.successMessage = response.message || 'Un email de réinitialisation a été envoyé.';
+      }
 
     } catch (error: any) {
       this.errorMessage = error?.error?.message || 'Une erreur est survenue';
