@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, getDocs, deleteDoc, doc } from '@angular/fire/firestore';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { firstValueFrom, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Pays {
   nom: string;
@@ -13,6 +16,7 @@ export interface Pays {
   providedIn: 'root'
 })
 export class InitDataService {
+  private readonly apiUrl = environment.apiUrl ?? '';
 
   private paysData: Pays[] = [
     {
@@ -20,30 +24,10 @@ export class InitDataService {
       drapeau: '🇹🇳',
       indicatif: '+216',
       villes: [
-        'Tunis',
-        'Sfax',
-        'Sousse',
-        'Kairouan',
-        'Bizerte',
-        'Gabès',
-        'Ariana',
-        'Gafsa',
-        'Monastir',
-        'Ben Arous',
-        'Kasserine',
-        'Médenine',
-        'Nabeul',
-        'Tataouine',
-        'Béja',
-        'Jendouba',
-        'Mahdia',
-        'Siliana',
-        'Kef',
-        'Tozeur',
-        'Kebili',
-        'Zaghouan',
-        'Manouba',
-        'Sidi Bouzid'
+        'Tunis', 'Sfax', 'Sousse', 'Kairouan', 'Bizerte', 'Gabès', 'Ariana',
+        'Gafsa', 'Monastir', 'Ben Arous', 'Kasserine', 'Médenine', 'Nabeul',
+        'Tataouine', 'Béja', 'Jendouba', 'Mahdia', 'Siliana', 'Kef', 'Tozeur',
+        'Kebili', 'Zaghouan', 'Manouba', 'Sidi Bouzid'
       ],
       phoneLength: 8
     },
@@ -52,26 +36,9 @@ export class InitDataService {
       drapeau: '🇫🇷',
       indicatif: '+33',
       villes: [
-        'Paris',
-        'Marseille',
-        'Lyon',
-        'Toulouse',
-        'Nice',
-        'Nantes',
-        'Strasbourg',
-        'Montpellier',
-        'Bordeaux',
-        'Lille',
-        'Rennes',
-        'Reims',
-        'Le Havre',
-        'Saint-Étienne',
-        'Toulon',
-        'Grenoble',
-        'Dijon',
-        'Angers',
-        'Nîmes',
-        'Villeurbanne'
+        'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg',
+        'Montpellier', 'Bordeaux', 'Lille', 'Rennes', 'Reims', 'Le Havre',
+        'Saint-Étienne', 'Toulon', 'Grenoble', 'Dijon', 'Angers', 'Nîmes', 'Villeurbanne'
       ],
       phoneLength: 9
     },
@@ -80,26 +47,9 @@ export class InitDataService {
       drapeau: '🇲🇦',
       indicatif: '+212',
       villes: [
-        'Casablanca',
-        'Rabat',
-        'Fès',
-        'Marrakech',
-        'Tanger',
-        'Agadir',
-        'Meknès',
-        'Oujda',
-        'Kenitra',
-        'Tétouan',
-        'Safi',
-        'El Jadida',
-        'Nador',
-        'Khouribga',
-        'Béni Mellal',
-        'Khémisset',
-        'Mohammedia',
-        'Taza',
-        'Ksar El Kébir',
-        'Settat'
+        'Casablanca', 'Rabat', 'Fès', 'Marrakech', 'Tanger', 'Agadir', 'Meknès',
+        'Oujda', 'Kenitra', 'Tétouan', 'Safi', 'El Jadida', 'Nador', 'Khouribga',
+        'Béni Mellal', 'Khémisset', 'Mohammedia', 'Taza', 'Ksar El Kébir', 'Settat'
       ],
       phoneLength: 9
     },
@@ -108,26 +58,9 @@ export class InitDataService {
       drapeau: '🇩🇿',
       indicatif: '+213',
       villes: [
-        'Alger',
-        'Oran',
-        'Constantine',
-        'Annaba',
-        'Blida',
-        'Batna',
-        'Sétif',
-        'Sidi Bel Abbès',
-        'Biskra',
-        'Tébessa',
-        'Tiaret',
-        'Béjaïa',
-        'Tlemcen',
-        'Ouargla',
-        'Skikda',
-        'Mostaganem',
-        'Tizi Ouzou',
-        'Médéa',
-        'El Oued',
-        'Chlef'
+        'Alger', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Sétif',
+        'Sidi Bel Abbès', 'Biskra', 'Tébessa', 'Tiaret', 'Béjaïa', 'Tlemcen',
+        'Ouargla', 'Skikda', 'Mostaganem', 'Tizi Ouzou', 'Médéa', 'El Oued', 'Chlef'
       ],
       phoneLength: 9
     },
@@ -136,16 +69,8 @@ export class InitDataService {
       drapeau: '🇧🇪',
       indicatif: '+32',
       villes: [
-        'Bruxelles',
-        'Anvers',
-        'Gand',
-        'Charleroi',
-        'Liège',
-        'Bruges',
-        'Namur',
-        'Louvain',
-        'Mons',
-        'Malines'
+        'Bruxelles', 'Anvers', 'Gand', 'Charleroi', 'Liège', 'Bruges',
+        'Namur', 'Louvain', 'Mons', 'Malines'
       ],
       phoneLength: 9
     },
@@ -154,16 +79,8 @@ export class InitDataService {
       drapeau: '🇨🇦',
       indicatif: '+1',
       villes: [
-        'Toronto',
-        'Montreal',
-        'Vancouver',
-        'Calgary',
-        'Edmonton',
-        'Ottawa',
-        'Winnipeg',
-        'Quebec',
-        'Hamilton',
-        'Kitchener'
+        'Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Edmonton',
+        'Ottawa', 'Winnipeg', 'Quebec', 'Hamilton', 'Kitchener'
       ],
       phoneLength: 10
     },
@@ -172,78 +89,57 @@ export class InitDataService {
       drapeau: '🇨🇭',
       indicatif: '+41',
       villes: [
-        'Zurich',
-        'Genève',
-        'Bâle',
-        'Lausanne',
-        'Berne',
-        'Winterthour',
-        'Lucerne',
-        'Saint-Gall',
-        'Lugano',
-        'Bienne'
+        'Zurich', 'Genève', 'Bâle', 'Lausanne', 'Berne', 'Winterthour',
+        'Lucerne', 'Saint-Gall', 'Lugano', 'Bienne'
       ],
       phoneLength: 9
     }
   ];
 
-  constructor(private firestore: Firestore) {}
+  constructor(private http: HttpClient) {}
 
-  // Initialiser tous les pays dans Firebase
+  /**
+   * Initialise les pays dans la base via l'API (bulk insert).
+   */
   async initializePays(): Promise<void> {
-    try {
-      const paysRef = collection(this.firestore, 'pays');
-      const snapshot = await getDocs(paysRef);
-      
-      console.log('📊 Vérification de la collection pays...');
-      console.log('Nombre de pays existants:', snapshot.size);
-
-      // Si la collection est vide, ajouter tous les pays
-      if (snapshot.empty) {
-        console.log('🚀 Initialisation des pays dans Firebase...');
-        
-        for (const pays of this.paysData) {
-          await addDoc(paysRef, pays);
-          console.log(`✅ Pays ajouté: ${pays.drapeau} ${pays.nom} (${pays.villes.length} villes)`);
-        }
-        
-        console.log('✨ Tous les pays ont été initialisés avec succès!');
-      } else {
-        console.log('✅ Les pays sont déjà initialisés dans Firebase');
-      }
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'initialisation des pays:', error);
-      throw error;
-    }
+    await firstValueFrom(
+      this.http
+        .post<void>(`${this.apiUrl}/api/admin/pays/init`, { pays: this.paysData })
+        .pipe(catchError(this.handleError('Erreur lors de l\'initialisation des pays')))
+    );
   }
 
-  // Réinitialiser complètement les pays (supprimer et recréer)
+  /**
+   * Réinitialise les pays côté base (supprime et recrée).
+   */
   async resetPays(): Promise<void> {
-    try {
-      const paysRef = collection(this.firestore, 'pays');
-      const snapshot = await getDocs(paysRef);
-      
-      console.log('🗑️  Suppression des pays existants...');
-      
-      // Supprimer tous les pays existants
-      for (const docSnapshot of snapshot.docs) {
-        await deleteDoc(doc(this.firestore, 'pays', docSnapshot.id));
-      }
-      
-      console.log('✅ Tous les pays ont été supprimés');
-      
-      // Ajouter les nouveaux pays
-      await this.initializePays();
-    } catch (error) {
-      console.error('❌ Erreur lors de la réinitialisation des pays:', error);
-      throw error;
-    }
+    await firstValueFrom(
+      this.http
+        .post<void>(`${this.apiUrl}/api/admin/pays/reset`, { pays: this.paysData })
+        .pipe(catchError(this.handleError('Erreur lors de la réinitialisation des pays')))
+    );
   }
 
-  // Obtenir les pays (pour vérification)
+  /**
+   * Retourne le nombre de pays stockés.
+   */
   async getPaysCount(): Promise<number> {
-    const paysRef = collection(this.firestore, 'pays');
-    const snapshot = await getDocs(paysRef);
-    return snapshot.size;
+    return firstValueFrom(
+      this.http
+        .get<{ count: number }>(`${this.apiUrl}/api/pays/count`)
+        .pipe(
+          catchError(this.handleError('Erreur lors de la récupération du nombre de pays')),
+          // fallback simple si la structure diffère
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // map not needed; destructuring in map would require import
+        )
+    ).then(res => (res as any)?.count ?? 0);
+  }
+
+  private handleError(message: string) {
+    return (error: HttpErrorResponse) => {
+      console.error(message, error);
+      return throwError(() => new Error(message));
+    };
   }
 }

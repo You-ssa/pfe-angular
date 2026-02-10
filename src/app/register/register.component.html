@@ -54,6 +54,11 @@
       <!-- Étape 2 : Pays + Ville + Téléphone -->
       <div *ngIf="currentStep === 2" class="step">
         <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="votre@email.com" required>
+        </div>
+
+        <div class="form-group">
           <label for="pays">Pays *</label>
           <select id="pays" [(ngModel)]="pays" name="pays" (change)="onPaysChange()" required>
             <option value="">Sélectionnez un pays</option>

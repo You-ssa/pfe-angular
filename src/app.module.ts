@@ -1,15 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';      // indispensable pour ngModel/ngForm
+import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AccueilComponent } from './accueil/accueil.component';
 import { ExplorerComponent } from './explorer/explorer.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
-
-import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
-import { provideFirestore, getFirestore } from '@angular/fire/firestore';
-import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -22,8 +19,7 @@ import { environment } from '../environments/environment';
   imports: [
     BrowserModule,
     FormsModule,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideFirestore(() => getFirestore())
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

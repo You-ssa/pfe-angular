@@ -36,7 +36,7 @@ export class RegisterSecComponent {
   successMessage = '';
   isLoading = false;
 
-  // Liste des spécialités (même que médecin)
+  // Listes de choix
   specialites = [
     'Médecine générale',
     'Cardiologie',
@@ -60,7 +60,6 @@ export class RegisterSecComponent {
     'Autre'
   ];
 
-  // Liste des postes
   postes = [
     'Secrétaire médical(e)',
     'Secrétaire administratif(ve)',
@@ -70,7 +69,6 @@ export class RegisterSecComponent {
     'Autre'
   ];
 
-  // Liste des départements
   departements = [
     'Accueil',
     'Cardiologie',
@@ -85,25 +83,26 @@ export class RegisterSecComponent {
     'Autre'
   ];
 
+  currentStep = 1;
+  totalSteps = 4;
+
   constructor(
     private userService: UserService,
     private router: Router
   ) {}
-currentStep = 1;
-totalSteps = 4;
 
-nextStep() { if(this.currentStep < this.totalSteps) this.currentStep++; }
-prevStep() { if(this.currentStep > 1) this.currentStep--; }
+  nextStep() { 
+    if (this.currentStep < this.totalSteps) this.currentStep++; 
+  }
+  
+  prevStep() { 
+    if (this.currentStep > 1) this.currentStep--; 
+  }
 
-  /**
-   * Gérer la sélection de photo
-   */
   onPhotoSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.photoFile = input.files[0];
-      
-      // Prévisualisation
       const reader = new FileReader();
       reader.onload = (e: any) => {
         this.photoPreview = e.target.result;
@@ -112,16 +111,13 @@ prevStep() { if(this.currentStep > 1) this.currentStep--; }
     }
   }
 
-  /**
-   * Inscription secrétaire
-   */
   async registerSec() {
     this.errorMessage = '';
     this.successMessage = '';
     this.isLoading = true;
 
-    // Validation des champs
-    if (!this.nom || !this.prenom || !this.sexe || !this.email || 
+    // Validation des champs obligatoires
+    if (!this.nom || !this.prenom || !this.sexe || !this.email ||
         !this.telephone || !this.specialite || !this.adresseHopital ||
         !this.poste || !this.departement || !this.motDePasse) {
       this.errorMessage = 'Veuillez remplir tous les champs obligatoires';
@@ -129,14 +125,22 @@ prevStep() { if(this.currentStep > 1) this.currentStep--; }
       return;
     }
 
-    // Validation des mots de passe
+    // Vérification correspondance mots de passe
     if (this.motDePasse !== this.confMotDePasse) {
       this.errorMessage = 'Les mots de passe ne correspondent pas';
       this.isLoading = false;
       return;
     }
 
-    // Validation des conditions
+    // Validation email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      this.errorMessage = 'Veuillez entrer une adresse email valide';
+      this.isLoading = false;
+      return;
+    }
+
+    // Acceptation des conditions
     if (!this.acceptConditions) {
       this.errorMessage = 'Vous devez accepter les conditions d\'utilisation';
       this.isLoading = false;
@@ -177,8 +181,9 @@ prevStep() { if(this.currentStep > 1) this.currentStep--; }
       }, 4000);
 
     } catch (error) {
-      console.error('Erreur lors de l\'inscription secrétaire:', error);
-      this.errorMessage = 'Une erreur est survenue lors de l\'inscription';
+      console.error('Erreur inscription secrétaire:', error);
+      const msg = (error as any)?.error?.message || 'Une erreur est survenue lors de l\'inscription';
+      this.errorMessage = msg;
     } finally {
       this.isLoading = false;
     }

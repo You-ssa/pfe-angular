@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { UserService, User } from '../services/user.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,25 +13,28 @@ import { UserService, User } from '../services/user.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+
   email = '';
   motDePasse = '';
   userType: 'patient' | 'medecin' | 'secretaire' | 'admin' = 'patient';
+
   errorMessage = '';
   isLoading = false;
 
   constructor(
     private userService: UserService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   /**
-   * Gérer la connexion
+   * 🔐 Gérer la connexion
    */
   async login() {
     this.errorMessage = '';
     this.isLoading = true;
 
-    // Validation des champs
+    // Validation
     if (!this.email || !this.motDePasse) {
       this.errorMessage = 'Veuillez remplir tous les champs';
       this.isLoading = false;
@@ -38,16 +42,19 @@ export class LoginComponent {
     }
 
     try {
-      const user: User | null = await this.userService.login(
+      const response: any = await this.userService.login(
         this.email,
         this.motDePasse,
         this.userType
       );
 
+      const user: User | null = response?.user ?? response;
+      const token: string | undefined = response?.token;
+
       if (!user) {
-        // Vérifier si le compte est en attente d'approbation
         if (this.userType === 'medecin' || this.userType === 'secretaire') {
-          this.errorMessage = 'Email ou mot de passe incorrect, ou compte en attente d\'approbation';
+          this.errorMessage =
+            'Email ou mot de passe incorrect, ou compte en attente d\'approbation';
         } else {
           this.errorMessage = 'Email ou mot de passe incorrect';
         }
@@ -55,21 +62,22 @@ export class LoginComponent {
         return;
       }
 
-      // Stocker l'utilisateur en session
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      localStorage.setItem('userType', user.userType);
+      // ✅ Sauvegarde propre de la session
+      this.authService.saveSession(user, token);
 
-      // Redirection selon le type d'utilisateur
+      // 🔁 Redirection selon rôle
       this.redirectUser(user.userType);
-    } catch (error) {
-      console.error('Erreur lors de la connexion:', error);
-      this.errorMessage = 'Une erreur est survenue lors de la connexion';
+
+    } catch (error: any) {
+      this.errorMessage =
+        error?.error?.message || 'Une erreur est survenue lors de la connexion';
+    } finally {
       this.isLoading = false;
     }
   }
 
   /**
-   * Rediriger l'utilisateur selon son type
+   * 🔁 Redirection selon le type d'utilisateur
    */
   private redirectUser(userType: string) {
     switch (userType) {
@@ -91,7 +99,7 @@ export class LoginComponent {
   }
 
   /**
-   * Naviguer vers la page d'inscription selon le type
+   * ➕ Aller vers l'inscription
    */
   goToRegister() {
     switch (this.userType) {
@@ -108,34 +116,40 @@ export class LoginComponent {
         this.router.navigate(['/register']);
     }
   }
-getImageForUser(): string {
-  switch (this.userType) {
-    case 'patient':
-      return 'assets/pat.jpg';
-    case 'medecin':
-      return 'assets/medc.jpg';
-    case 'secretaire':
-      return 'assets/secr.jpg';
-    case 'admin':
-      return 'assets/admin.png';
-    default:
-      return 'assets/default.png';
+
+  /**
+   * 🖼️ Image selon type utilisateur
+   */
+  getImageForUser(): string {
+    switch (this.userType) {
+      case 'patient':
+        return 'assets/pat.jpg';
+      case 'medecin':
+        return 'assets/medc.jpg';
+      case 'secretaire':
+        return 'assets/secr.jpg';
+      case 'admin':
+        return 'assets/admin.png';
+      default:
+        return 'assets/default.png';
+    }
+  }
+
+  /**
+   * 💬 Phrase selon type utilisateur
+   */
+  getPhraseForUser(): string {
+    switch (this.userType) {
+      case 'patient':
+        return 'Restez fort et positif, nous sommes là';
+      case 'medecin':
+        return 'Vous êtes l’espoir de chaque patient';
+      case 'secretaire':
+        return 'Accueil chaleureux, travail parfait';
+      case 'admin':
+        return 'Vous êtes le pilier de notre réussite<br>Reste fort';
+      default:
+        return 'Bienvenue';
+    }
   }
 }
-getPhraseForUser(): string {
-  switch (this.userType) {
-    case 'patient':
-      return 'Restez fort et positif, nous sommes là';
-    case 'medecin':
-      return 'Vous êtes l’espoir de chaque patient';
-    case 'secretaire':
-      return 'Accueil chaleureux, travail parfait';
-    case 'admin':
-      return 'Vous êtes le pilier de notre réussite<br>Reste fort';
-    default:
-      return 'Bienvenue';
-  }
-}
-
-
-} 

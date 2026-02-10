@@ -48,11 +48,11 @@
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="nextStep()">Suivant …</button>
+          <button type="button" (click)="nextStep()">Suivant →</button>
         </div>
       </div>
 
-      <!-- Étape 2 : Email + Téléphone + Numéro identité -->
+      <!-- Étape 2 : Email + Téléphone + Numéro identité (optionnel) -->
       <div *ngIf="currentStep === 2" class="step">
         <div class="form-group">
           <label for="email">Email *</label>
@@ -65,13 +65,14 @@
         </div>
 
         <div class="form-group">
-          <label for="rpps">Numéro d'identité</label>
+          <label for="rpps">Numéro d'identité (optionnel)</label>
           <input type="text" id="rpps" [(ngModel)]="rpps" name="rpps" placeholder="Optionnel">
+          <small class="hint">Numéro d'identification professionnelle si applicable</small>
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="prevStep()">… Retour</button>
-          <button type="button" (click)="nextStep()">Suivant …</button>
+          <button type="button" (click)="prevStep()">← Retour</button>
+          <button type="button" (click)="nextStep()">Suivant →</button>
         </div>
       </div>
 
@@ -104,8 +105,8 @@
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="prevStep()">… Retour</button>
-          <button type="button" (click)="nextStep()">Suivant …</button>
+          <button type="button" (click)="prevStep()">← Retour</button>
+          <button type="button" (click)="nextStep()">Suivant →</button>
         </div>
       </div>
 
@@ -134,8 +135,11 @@
         </div>
 
         <div class="step-buttons">
-          <button type="button" (click)="prevStep()">… Retour</button>
-          <button type="submit">Créer mon compte</button>
+          <button type="button" (click)="prevStep()">← Retour</button>
+          <button type="submit" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Créer mon compte</span>
+            <span *ngIf="isLoading">Inscription en cours...</span>
+          </button>
         </div>
       </div>
 

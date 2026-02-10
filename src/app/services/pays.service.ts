@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, getDocs, addDoc } from '@angular/fire/firestore';
 
 export interface Pays {
   nom: string;
@@ -15,38 +14,21 @@ export interface Pays {
 export class PaysService {
   private paysCache: Pays[] = [];
 
-  constructor(private firestore: Firestore) {}
+  constructor() {}
 
   /**
-   * Récupérer la liste des pays depuis Firestore
+   * Retourne la liste des pays (cache en mémoire).
    */
   async getPays(): Promise<Pays[]> {
-    // Utiliser le cache si disponible
     if (this.paysCache.length > 0) {
       return this.paysCache;
     }
-
-    try {
-      const querySnapshot = await getDocs(collection(this.firestore, 'pays'));
-      const pays: Pays[] = [];
-      
-      querySnapshot.forEach(doc => {
-        pays.push(doc.data() as Pays);
-      });
-
-      this.paysCache = pays;
-      return pays;
-    } catch (error) {
-      console.error('❌ Erreur lors de la récupération des pays:', error);
-      return [];
-    }
+    this.paysCache = this.buildPaysData();
+    return this.paysCache;
   }
 
-  /**
-   * Initialiser les pays dans Firestore (à exécuter une seule fois)
-   */
-  async initPays(): Promise<void> {
-    const paysData: Pays[] = [
+  private buildPaysData(): Pays[] {
+    return [
       {
         nom: 'Tunisie',
         drapeau: '🇹🇳',
@@ -125,14 +107,5 @@ export class PaysService {
         ]
       }
     ];
-
-    try {
-      for (const pays of paysData) {
-        await addDoc(collection(this.firestore, 'pays'), pays);
-      }
-      console.log('✅ Pays initialisés avec succès');
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'initialisation des pays:', error);
-    }
   }
 }

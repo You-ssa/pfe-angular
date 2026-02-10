@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { UserService, User } from '../services/user.service';
 import { PaysService, Pays } from '../services/pays.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -158,8 +159,8 @@ export class RegisterComponent implements OnInit {
       setTimeout(() => this.router.navigate(['/login']), 2000);
 
     } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error);
-      this.errorMessage = 'Une erreur est survenue lors de l\'inscription';
+      const msg = (error as HttpErrorResponse)?.error?.message || 'Une erreur est survenue lors de l\'inscription';
+      this.errorMessage = msg;
     } finally {
       this.isLoading = false;
     }
